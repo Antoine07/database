@@ -335,3 +335,11 @@ Vous pouvez utiliser l'opérateur d'existance de Mongo sur une propriété, il p
 ```
 
 10. Affichez le nom des sociétés qui ont le tag blank.
+
+## Projection
+
+Le deuxième paramètre définie une projection, ici on souhaite n'afficher que le nom des sociétés qui ont un prix égale à 0.99
+
+```js
+db.inventory.find({"price" : 0.99}, {"society": 1})
+```
