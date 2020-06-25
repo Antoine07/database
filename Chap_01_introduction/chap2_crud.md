@@ -278,15 +278,15 @@ Créez une base de données **shop** et insérez les données suivantes :
 
 ```js
 db.inventory.insertMany( [
-    { "sale" : true, "price" : 0.99, "society" : "Alex", type: "postcard", qty: 19, size: { h: 11, w: 29, uom: "cm" }, status: "A", tags: ["blank"], "year" : 2019  },
-    { "sale" : false, "price" : 1.99, "society" : "Alan", type: "journal", qty: 25, size: { h: 14, w: 21, uom: "cm" }, status: "A", tags: ["blank", "red"], "year" : 2019  },
+    { "sale" : true, "price" : 0.99, "society" : "Alex", type: "postcard", qty: 19, size: { h: 11, w: 29, uom: "cm" }, status: "A", tags: ["blank", "blank", "blank"], "year" : 2019  },
+    { "sale" : false, "price" : 1.99, "society" : "Alan", type: "journal", qty: 25, size: { h: 14, w: 21, uom: "cm" }, status: "A", tags: ["blank", "red", "blank", "blank"], "year" : 2019  },
     { "sale" : true, "price" : 1.5, "society" : "Albert", type: "notebook", qty: 50, size: { h: 8.5, w: 11, uom: "in" }, status: "A",  tags: ["gray"], year : 2019 },
     { "sale" : true, "price" : 7.99, "society" : "Alice", type: "lux paper", qty: 100, size: { h: 8.5, w: 11, uom: "in" }, status: "D", year : 2020 },
     { "sale" : true, "price" : 2.99, "society" : "Sophie", type: "planner", qty: 75, size: { h: 22.85, w: 30, uom: "cm" }, status: "D", tags: ["gel", "blue"], year : 2017 },
     { "sale" : false, "price" : 0.99, "society" : "Phil", type: "postcard", qty: 45, size: { h: 10, w: 15.25, uom: "cm" }, status: "A", tags: ["gray"], year : 2018 },
-    { "sale" : true, "price" : 4.99, "society" : "Nel", type: "journal", qty: 19, size: { h: 10, w: 21, uom: "cm" }, status: "B", tags: [, "red"], "year" : 2019  },
+    { "sale" : true, "price" : 4.99, "society" : "Nel", type: "journal", qty: 19, size: { h: 10, w: 21, uom: "cm" }, status: "B", tags: ["blank", "blank", "blank", "red"], "year" : 2019  },
     { "sale" : true, "price" : 4.99, "society" : "Alex", type: "journal", qty: 15, size: { h: 17, w: 20, uom: "cm" }, status: "C", tags: ["blank"], "year" : 2019  },
-    { "sale" : false, "price" : 5.99, "society" : "Tony", type: "journal", qty: 100, size: { h: 14, w: 21, uom: "cm" }, status: "B", tags: ["blank", "red"], "year" : 2020  },
+    { "sale" : false, "price" : 5.99, "society" : "Tony", type: "journal", qty: 100, size: { h: 14, w: 21, uom: "cm" }, status: "B", tags: ["blank","blank", "blank", "red"], "year" : 2020  },
 ]);
 
 ```
@@ -336,10 +336,244 @@ Vous pouvez utiliser l'opérateur d'existance de Mongo sur une propriété, il p
 
 10. Affichez le nom des sociétés qui ont le tag blank.
 
+
+## Filtrage
+
+Nous avons déjà rencontré les filtres suivants :
+
+```js
+// plus grand que
+$gt, $gte
+
+// Plus petit que
+$lt, $lte
+
+```
+
+Vous avez également les filtres suivants :
+
+```js
+// différent de
+$ne
+"number" : {"$ne" : 10}
+
+// fait partie de 
+$in, $nin 
+"notes" : {"$in" : [10, 12, 15, 18] }
+"notes" : {"$nin" : [10, 12, 15, 18] }
+
+// Ou
+$or
+"notes : { "$or": [{"$gt" : 10}, {"$lt" : 5} ] }
+// and
+$and
+
+"notes : { "$and": [{"$gt" : 10}, {"$lt" : 5} ] }
+
+// négation
+$not
+"notes" : {"$not" : {"$lt" : 10} }
+
+// existe
+$exists
+"notes" : {"$exists" : 1}
+
+// test sur la taille d'une liste
+$size
+"notes" : {"$size" : 4}
+
+// element match
+
+/*
+{
+                           
+    "content" : [
+        { "name" : <string>, year: <number>, by: <string> } 
+        ...
+    ]
+}
+*/
+
+
+{ "content": { $elemMatch: { "name": "Turing Award", "year": { $gt: 1980 } } } }
+
+// recherche avec une Regex 
+$regex
+{ "name": { $regex: /^A/ } }
+
+```
+
+## Retourner uniquement certains champs
+
+Vous pouvez également retourner que certains champs du document à l'aide de la syntaxe suivante :
+
+```js
+db.students.find(
+   { },
+   { "type" : 1, "society" : 1 }
+)
+
+```
+
+## Modification du curseurs
+
+Vous pouvez également utiliser les méthodes suivantes :
+
+```js
+// retourne la collection à partir du 6 documents
+db.students.find().skip( 5 )
+// limite le nombre de documents
+db.students.find().limit( 5 )
+```
+
+Les méthodes combinées suivantes modifiants le curseur sont équivalentes :
+
+```js
+db.students.find().sort( { name: 1 } ).limit( 5 )
+db.students.find().limit( 5 ).sort( { name: 1 } )
+```
+
+Une fonction d'agrégation utile également est la méthode count qui retourne le nombre de document dans une collection :
+
+```js
+db.students.count()
+```
+
+Cette fonction d'aggrégation peut évidemment être combinée à une restriction :
+```js
+db.restaurants.find({borough :"Brooklyn"}).count()
+```
+
 ## Projection
 
-Le deuxième paramètre définie une projection, ici on souhaite n'afficher que le nom des sociétés qui ont un prix égale à 0.99
+Le deuxième paramètre de la fonction find permet de définir une projection. Ici on n'affichera le nom des sociétés, projection qui ont un prix égale à 0.99, restriction.
 
 ```js
 db.inventory.find({"price" : 0.99}, {"society": 1})
+```
+
+Notez que si utilisez la valeur 0 à la place de 1 alors vous excluez ce champ mais vous récupérez alors tous les autres :
+
+```js
+db.inventory.find({"price" : 0.99}, {"society": 0})
+```
+
+La structure d'une requête avec find ou findOne est donc :
+
+```js
+db.collection.findOne(query, projection)
+```
+
+Notez que si vous souhaitez un affichage plus élégant en console vous pouvez utiliser l'option pretty à votre recherche :
+
+```js
+db.collection.findOne(query, projection).pretty()
+```
+
+## Mettre à jour un document dans une collection
+
+Repartons de la collection inventory la méthode updateOne permet de mettre le premier document pour lequel le critère de recherche est trouvé à jour.
+
+```js
+
+db.inventory.insertMany( [
+    { "sale" : true, "price" : 0.99, "society" : "Alex", type: "postcard", qty: 19, size: { h: 11, w: 29, uom: "cm" }, status: "A", tags: ["blank", "blank", "blank"], "year" : 2019  },
+    { "sale" : false, "price" : 1.99, "society" : "Alan", type: "journal", qty: 25, size: { h: 14, w: 21, uom: "cm" }, status: "A", tags: ["blank", "red", "blank", "blank"], "year" : 2019  },
+    { "sale" : true, "price" : 1.5, "society" : "Albert", type: "notebook", qty: 50, size: { h: 8.5, w: 11, uom: "in" }, status: "A",  tags: ["gray"], year : 2019 },
+    { "sale" : true, "price" : 7.99, "society" : "Alice", type: "lux paper", qty: 100, size: { h: 8.5, w: 11, uom: "in" }, status: "D", year : 2020 },
+    { "sale" : true, "price" : 2.99, "society" : "Sophie", type: "planner", qty: 75, size: { h: 22.85, w: 30, uom: "cm" }, status: "D", tags: ["gel", "blue"], year : 2017 },
+    { "sale" : false, "price" : 0.99, "society" : "Phil", type: "postcard", qty: 45, size: { h: 10, w: 15.25, uom: "cm" }, status: "A", tags: ["gray"], year : 2018 },
+    { "sale" : true, "price" : 4.99, "society" : "Nel", type: "journal", qty: 19, size: { h: 10, w: 21, uom: "cm" }, status: "B", tags: ["blank", "blank", "blank", "red"], "year" : 2019  },
+    { "sale" : true, "price" : 4.99, "society" : "Alex", type: "journal", qty: 15, size: { h: 17, w: 20, uom: "cm" }, status: "C", tags: ["blank"], "year" : 2019  },
+    { "sale" : false, "price" : 5.99, "society" : "Tony", type: "journal", qty: 100, size: { h: 14, w: 21, uom: "cm" }, status: "B", tags: ["blank","blank", "blank", "red"], "year" : 2020  },
+]);
+```
+
+Remarque si vous souhaitez supprimer les documents vous pouvez tapez la ligne de code suivante :
+
+```js
+db.inventory.remove({})
+```
+
+- Exemple de modification avec la méthode updateOne
+
+Structure : 
+
+- critère de recherche
+
+- Modification avec l'opérateur set
+
+Supposons que l'on veuille mettre à jour le premier document dont le status est D. Nous changeons dans cet exemple les valeurs pour la propriété size et notifions à Mongo une date de modification pour ce document.
+
+Mongo ne crée pas de document en plus si le critère de recherche ne trouve aucune  correspondance :
+
+```js
+db.inventory.updateOne(
+   { status: "B" },
+   {
+     $set: { "size.uom": "cm", status: "X" },
+     $currentDate: { lastModified: true }
+   }
+)
+```
+
+Vous pouvez ajouter une option afin de préciser que vous souhaitez ajouter le document si celui-ci n'est pas trouvé :
+
+```js
+db.inventory.updateOne(
+   { status: "XXX" },
+   {
+     $set: { "size.uom": "cm", status: "SUPER" },
+     $currentDate: { lastModified: true }
+   },
+    {"upsert": true}
+)
+```
+
+Un nouveau document sera alors ajouté :
+
+```js
+db.inventory.find({}, { status : 1 })
+ // { "_id" : ObjectId("5ef43c659c3a4c119caf7ef5"), "status" : "SUPER" }
+```
+
+Vous pouvez également mettre à jour un document à l'aide des méthodes suivantes :
+
+collection.updateMany()
+
+Voici un dernier exemple qui vous permettra d'écrire de l'algorithmique dans une requête plus facilement :
+
+```js
+const query = {status : "A"};
+const update = { "$mul": { "qty": 10 } };
+const options = { "upsert": false }
+
+const updateInventory = (query, update, options) => db.inventory.updateMany(query, update, options) ;
+
+updateInventory(query, update, options);
+
+```
+
+## Exercice avec forEach
+
+Rappelons la structure du forEach de Mongo que vous pouvez appliquer à un find :
+
+```js
+db.collection.find().forEach(<function>)
+```
+
+1. En utilisant la fonction forEach et la fonction find augmentez de 50% la quantité de chaque document qui a un status C ou D.
+
+2. Augmentez maintenant de 150% les documents ayant un status A ou B et au moins 3 blanks dans leurs tags.
+
+## Méthode unset
+
+Vous pouvez également supprimer un champ d'un document à l'aide de l'opérateur unset, ci-dessous on supprime les champs qty et status du premier document qui match avec status recherché :
+
+```js
+db.inventory.updateOne(
+   { status: "XXX" },
+   { $unset: { qty: "", status: "" } },
+    {"upsert": true}
+)
 ```

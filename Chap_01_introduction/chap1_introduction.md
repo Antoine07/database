@@ -127,7 +127,11 @@ Mongo possède une base de données par défaut : test. Nous allons voir comment
 
 ## Commandes MongoDB
 
-Une fois connecter sur votre serveur MongoDB. Vous avez accès aux commandes CLI.
+Une fois connecter sur votre serveur MongoDB. Vous avez accès aux commandes CLI. Notez que pour se déconnecter il faudra tapez la ligne de commande suivante :
+
+```bash
+quit()
+```
 
 ### Commandes de base
 
