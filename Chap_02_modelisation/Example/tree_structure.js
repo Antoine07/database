@@ -1,80 +1,33 @@
-const store = [
+const bookStore = [
     {
-        "name": "Data",
-        "_id": "store"
+        _id: "Books",
+        parent: null,
+        name: "Informatique"
     },
     {
-        "_id": "Languages",
-        "parent": "store",
-        "books" : [
-            ""
-        ]
-    },
-    ,
-    {
-        "_id": "Languages",
-        "parent": "store",
-        "books" : [
-            ""
+        _id: "Programming",
+        parent: "Books",
+        books: [
+            "Python apprendre",
+            "Pandas & Python",
+            "async/await JS & Python"
         ]
     },
     {
-        "_id": "Database",
-        "parent": "store"
+        _id: "Database",
+        parent: "Programming",
+        books: [
+            "NoSQL & devenir expert avec la console",
+            "NoSQL drivers",
+            "SQL"
+        ]
     },
-            {
-                "name": "House of Representatives",
-                "_id": "house",
-                "parent": "congress"
-            },
-            {
-                "name": "Senate",
-                "_id": "senate",
-                "parent": "congress"
-            },
-        {
-            "name": "Executive",
-            "_id": "exec",
-            "parent": "root"
-        },
-            {
-                "name": "Pres_ident",
-                "_id": "pres",
-                "parent": "exec"
-            },
-            {
-                "name": "Vice Pres_ident",
-                "_id": "vice-pres",
-                "parent": "exec"
-            },
-            {
-                "name": "Secretary of State",
-                "_id": "state",
-                "parent": "exec"
-            },
-            {
-                "name": "Cabinet",
-                "_id": "cabinet",
-                "parent": "exec"
-            },
-                {
-                    "name": "National Security Council",
-                    "_id": "security",
-                    "parent": "cabinet"
-                },
-                {
-                    "name": "Council of Economic Advisers",
-                    "_id": "economic",
-                    "parent": "cabinet"
-                },
-                {
-                    "name": "Office of Management and Budget",
-                    "_id": "budget",
-                    "parent": "cabinet"
-                },
-        {
-            "name": "Judicial",
-            "_id": "judicial",
-            "parent": "root"
-        }
+    {
+        _id: "MongoDB",
+        parent: "Database",
+        books: [
+            "Introduction à MongoDB",
+            "MongoDB aggrégation"
+        ]
+    }
 ]

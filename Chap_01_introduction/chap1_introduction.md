@@ -1,6 +1,12 @@
 # Introduction & Présentation
 
-MongoDB est une base de données NoSQL orientée documents.
+MongoDB est une base de données NoSQL orientée documents qui est mature et qui existe depuis 2007. NoSQL signifie Not Only SQL.
+
+Pour le stockage de données massives qui varient dans le temps. Lorsque la structure des données est connues au préalable et ne bouge pas dans le temps on utilisera de préférence du SQL.
+
+Dans un projet vous serez amener à utiliser les deux SQL et NoSQL.
+
+Notons également que MongoDB propose un ensemble important de drivers pour pouvoir l'utiliser avec des langage de programmation comme PHP, Python, NodeJS, ...
 
 ## Collection
 
