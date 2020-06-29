@@ -110,4 +110,13 @@ db.restaurants.aggregate([
 ])
 
 
-// 
+// Exercice supplémentaire avec categoriestree dans la base de données bookstore
+
+// 1. Framework d'aggregation ajoutez une propriété total qui calcul le nombre de livres par document
+
+db.categoriestree.aggregate( { $project: { total : { "$size": { "$ifNull": [ "$books", [] ] } } }  } ).forEach(
+    doc => {
+        
+        db.categoriestree.update(  { $and  : [ { _id: doc._id,  }, { books : { $exists: true } } ] },  { $set: { "total": doc.total } });
+    }
+)

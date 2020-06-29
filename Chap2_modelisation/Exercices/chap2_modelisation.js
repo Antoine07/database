@@ -130,16 +130,6 @@ categoriestree =
 db.categoriestree.insertMany(categoriestree);
 db.categoriestree.createIndex({ parent: 1 });
 
-// 1. Framework d'aggregation
-
-db.categoriestree.aggregate( { $project: { total : { "$size": { "$ifNull": [ "$books", [] ] } } }  } ).forEach(
-    doc => {
-        
-        db.categoriestree.update(  { $and  : [ { _id: doc._id,  }, { books : { $exists: true } } ] },  { $set: { "total": doc.total } });
-    }
-)
-
-
 // 1.
 
 const pushAncesstors = (_id, doc) => {

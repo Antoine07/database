@@ -1,19 +1,4 @@
-// Exercice correction Compter le nombre de restaurants dans le quartier de Brookling
 
-const resBrookling = db.restaurants.find( {
-    borough: "Brooklyn"
-}, {"name" : 1} )
-
-let count = 0 ;
-
-resBrookling.forEach(() => {
-    count++;
-});
-
-print(count);
-
-// Comparaison avec la méthode count
-print(resBrookling.count())
 
 
 // 1. Affichez tous les articles de type journal. Et donnez la quantité total de ces articles (propriété qty).

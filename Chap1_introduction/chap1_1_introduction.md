@@ -1,6 +1,8 @@
 # Introduction & Présentation
 
-MongoDB est une base de données NoSQL orientée documents qui est mature et qui existe depuis 2007. NoSQL signifie Not Only SQL.
+MongoDB est une base de données NoSQL (Not Only SQL) crée en 2007, mature et orientée document.
+
+Mongo est un DSL domain-specific language. Mongo n'utilise pas le paradigme SQL, il utilise un langage dédié aux données.
 
 Pour le stockage de données massives qui varient dans le temps. Lorsque la structure des données est connues au préalable et ne bouge pas dans le temps on utilisera de préférence du SQL.
 

@@ -190,3 +190,54 @@ const unwindCuisine = { $unwind : "$grades" }
 ```
 
 Calculez la moyenne des scores par type de cuisine.
+
+## Exercice tree structure Algorithmique 
+
+Dans la base de données **bookstore**.
+
+Soit la collection categoriestree suivante.
+
+1. Framework d'aggregation ajoutez une propriété total qui calcul le nombre de livres par document
+
+On vous redonne les données déjà utiliser dans cette base de données :
+
+```js
+
+const categoriestree =
+[
+   {
+      _id: "Books",
+      parent: null,
+      name: "Informatique"
+   },
+   {
+      _id: "Programming",
+      parent: "Books",
+      books: [
+            "Python apprendre",
+            "Pandas & Python",
+            "async/await JS & Python"
+      ]
+   },
+   {
+      _id: "Database",
+      parent: "Programming",
+      books: [
+            "NoSQL & devenir expert avec la console",
+            "NoSQL drivers",
+            "SQL"
+      ]
+   },
+   {
+      _id: "MongoDB",
+      parent: "Database",
+      books: [
+            "Introduction à MongoDB",
+            "MongoDB aggrégation"
+      ]
+   }
+];
+
+db.categoriestree.insertMany(categoriestree);
+db.categoriestree.createIndex( { parent: 1 } );
+```
