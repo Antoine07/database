@@ -9,6 +9,8 @@ mongo
 > use movies
 ```
 
+Vous pouvez également lancer votre outils graphique Robo 3T.
+
 ## Création d'une collection
 
 Création d'une collection authors :
@@ -19,17 +21,21 @@ db.createCollection("authors")
 
 ## Installez les données d'exemple
 
-Récupérez la source des données dans un dossier sources :
+Récupérez la source des données dans un dossier DataExamples :
 
 https://raw.githubusercontent.com/mongodb/docs-assets/primer-dataset/primer-dataset.json
 
 
-Dans le dossier source dans une console tapez la ligne de commande suivante :
+Dans le dossier DataExamples lancez dans la console mongo puis tapez la ligne de commande qui suit :
+
+--db pour donner un nom à votre base de données.
+--collection indique le nom de votre collection
+--file indique le nom du fichier à intégrer dans la base de données
+--drop supprimera au préalable les collections existantes.
 
 ```bash
 # Import de données csv dans une base de données que l'on va créer train
 mongoimport --db ny --collection restaurants --file primer-dataset.json --drop
-
 ```
 
 Vérifiez que vos données sont bien importez :
@@ -41,6 +47,14 @@ use ny
 
 show collections
 restaurants
+```
+
+Un document Mongo est un **BJSON** c'est un JSON avec en plus des types pré-définis par Mongo. De plus chaque document Mongo possède une propriété _id dont la valeur est unique.
+
+Pour faire une sauvegarde d'une collection au format BJSON vous tapez la ligne de commande suivante, la sauvegarde sera faite dans un dossier dump :
+
+```bash
+mongodump --collection restaurants --db ny
 ```
 
 ## Insertion de données
@@ -142,6 +156,8 @@ Méthode insertOne :
 ```
 
 ## Méthode find lecture des données
+
+Mongo est un DSL domain-specific language. Mongo n'utilise pas le paradigme SQL.
 
 Pour les exemples suivants connectez-vous à la base de données ny que nous avons créée au début du chapitre :
 

@@ -1,4 +1,4 @@
-# Modélisation 
+# Introduction à la Modélisation 
 
 Le modèle semi-structuré n'est pas soumis aux contraintes de normalisation.
 
@@ -135,17 +135,16 @@ const newBooks = [
 Trouvez un moyen d'associer ces livres aux catégories du projet.
 
 
-## Exercice tree structure Algorithmique
+En ce qui concerne la relation oneToOne elle est simple à mettre en place. Par contre la relation ManyToMany 
+
+
+## Exercice tree structure Algorithmique recherche **
 
 Dans la base de données **bookstore**.
 
 Soit la collection categoriestree suivante.
 
-1. Ajoutez une propriété count pour chaque document indiquant son nombre de livre(s).
-
-2. Comptez le nombre total de livre dans la collection.
-
-2. Ecrire un algorithme qui ajoute une propriété ancesstors à la collection afin d'énumérer les catégories parentes. Vous utiliserez l'opérateur **addToSet** pour ajouter le/les parent(s) de chaque document.
+1. Ecrire un algorithme qui ajoute une propriété ancesstors à la collection afin d'énumérer les catégories parentes. Vous utiliserez l'opérateur **addToSet** pour ajouter le/les parent(s) de chaque document.
 
 Par exemple la catégorie MongoDB aurait la propriété ancesstors suivante :
 

@@ -111,6 +111,25 @@ mongo --version
 # se connecter au serveur
 mongo
 ```
+Le fichier de configuration de Mongo se trouve à l'adresse suivante :
+
+```txt
+/usr/local/etc/mongod.conf
+```
+
+Le contenu de ce fichier vous renseignera sur la configuration de Mongo sur votre machine :
+
+```txt
+systemLog:
+  destination: file
+  path: /usr/local/var/log/mongodb/mongo.log
+  logAppend: true
+storage:
+  dbPath: /usr/local/var/mongodb
+net:
+  bindIp: 127.0.0.1
+```
+
 
 ### Linux
 
@@ -163,3 +182,9 @@ db.address.drop()
 // supprime la base de données actuelle (use restaurants)
 db.dropDatabase()
 ```
+
+## Outils graphique Robo 3T
+
+Vous pouvez également installer un outils graphique Robo 3T : https://robomongo.org/download. Attention, Robo 3T est gratuit pas studio 3T. 
+
+Cet outils est intéressant mais, nous pouvons cependant travailler directement dans la console avec mongo. Ce dernier intègre toutes les commandes MongoDB et un interpréteur Javascript.

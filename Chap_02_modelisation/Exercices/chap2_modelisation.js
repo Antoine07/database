@@ -83,46 +83,44 @@ Dans la base de données **bookstore**.
 
 Soit les données suivantes structurées sous forme d'un arbre imbriqué. 
 
-1. Ajoutez une propriété count pour chaque document indiquant son nombre de livre(s).
 
-2. Comptez le nombre total de livre dans la collection.
-
-3. Ecrire un algorithme qui ajoute une propriété ancesstors 
+1. Ecrire un algorithme qui ajoute une propriété ancesstors 
 à la collection afin d'énumérer les catégories parentes. Vous utiliserez 
 l'opérateur **addToSet** pour ajouter le/les parent(s) de chaque document.
 */
+
 
 let categoriestree;
 
 categoriestree =
     [
         {
-            _id: "Books",
-            parent: null,
-            name: "Informatique"
+            "_id": "Books",
+            "parent": null,
+            "name": "Informatique"
         },
         {
-            _id: "Programming",
-            parent: "Books",
-            books: [
+            "_id": "Programming",
+            "parent": "Books",
+            "books": [
                 "Python apprendre",
                 "Pandas & Python",
                 "async/await JS & Python"
             ]
         },
         {
-            _id: "Database",
-            parent: "Programming",
-            books: [
+            "_id": "Database",
+            "parent": "Programming",
+            "books": [
                 "NoSQL & devenir expert avec la console",
                 "NoSQL drivers",
                 "SQL"
             ]
         },
         {
-            _id: "MongoDB",
-            parent: "Database",
-            books: [
+            "_id": "MongoDB",
+            "parent": "Database",
+            "books": [
                 "Introduction à MongoDB",
                 "MongoDB aggrégation"
             ]
@@ -132,16 +130,17 @@ categoriestree =
 db.categoriestree.insertMany(categoriestree);
 db.categoriestree.createIndex({ parent: 1 });
 
-// 1. 
+// 1. Framework d'aggregation
 
-db.categoriestree.find({ books: { $exists: true } }).forEach(doc => {
-    print( doc.books )
-})
+db.categoriestree.aggregate( { $project: { total : { "$size": { "$ifNull": [ "$books", [] ] } } }  } ).forEach(
+    doc => {
+        
+        db.categoriestree.update(  { $and  : [ { _id: doc._id,  }, { books : { $exists: true } } ] },  { $set: { "total": doc.total } });
+    }
+)
 
-// 2.
 
-
-// 3.
+// 1.
 
 const pushAncesstors = (_id, doc) => {
     if (doc.parent) {
