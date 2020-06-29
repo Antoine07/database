@@ -13,7 +13,7 @@ Si vous avez installé Robo 3T vous pouvez également créer la base de données
 
 ## Insertion de données
 
-Création la collection authors dans la base de données movies
+Création la collection authors dans la base de données school
 
 ```js
 db.createCollection("authors")
@@ -52,9 +52,11 @@ db.authors.insert([
 
 Remarques : si on ne précise pas de propriété _id dans le document alors Mongo la crée et un ObjectId est créé (hash unique pour identifier le document dans la collection). De plus si la collection n'extiste pas elle est créée.
 
-Les méthodes **insertMany** et **insertOne** permettent respectivement d'insérer un document unique ou plusieurs.
+Les méthodes **insertMany** et **insertOne** permettent respectivement d'insérer plusieurs ou un document unique.
 
-Vous pouvez également spécifier la propriété _id lors de la création mais, attention elle doit être unique sinon Mongo vous empêchera d'écraser l'ancien document :
+Lorsque vous créer un nouveau document dans une collection Mongo crée un _id unique.
+
+Vous pouvez donner une valeur particulière à la propriété _id lors de la création mais, attention elle doit être unique sinon Mongo vous empêchera d'écraser l'ancien document :
 
 ```js
 db.authors.insert(
@@ -62,16 +64,16 @@ db.authors.insert(
 )
 ```
 
-Vous pouvez créer votre propre _id avec une valeur de type scalaire. Nous rappelons que les variables scalaires sont celles qui contiennent des numériques, des chaînes de caractères ou des booléens. Attention les types array, object et resource ne sont pas scalaires, ils sont mutables. Un identifiant doit être unique et non mutable.
+Vous pouvez créer votre propre _id avec une valeur de type scalaire (non mutable). Les scalaires sont des variables qui contiennent des numériques, des chaînes de caractères ou des booléens. Les types array, object et resource ne sont pas scalaires, ils sont mutables.
 
-- Précisions sur l'objet ObjectId de Mongo.
+- Précisions sur l'objet ObjectId de Mongo qui crée un identifiant unique.
 
-ObjectId est codé sur 12 bytes
+Il est codé sur 12 bytes :
 
-- 4 bytes représentant le timestamp courant (nombre de secondes depuis epoch).
-- 3 bytes pour idenfitication de la machine
-- 2 bytes pour représenter l’identifiant du processus
-- 3 bytes qui représentent un compteur qui démarre à un numéro aléatoire
+- 4 bytes représentant le timestamp courant (nombre de secondes depuis epoch, naissance d'UNIX).
+- 3 bytes pour idenfitication de la machine.
+- 2 bytes pour représenter l’identifiant du processus.
+- 3 bytes qui représentent un compteur qui démarre à un numéro aléatoire.
 
 Essayez dans la console de tapez la ligne de code suivante :
 
@@ -115,17 +117,15 @@ Méthode insertOne :
 };
 ```
 
-## Méthode find lecture des données 
+## Méthode find lecture des données
 
-### Installez les données d'exemple
+### Installez les données restaurants
 
-Pour la suite du cours nous installons les données suivante.
-
-Récupérez la source des données dans un dossier DataExamples :
+Récupérez les données dans un dossier **DataExamples** :
 
 https://raw.githubusercontent.com/mongodb/docs-assets/primer-dataset/primer-dataset.json
 
-Dans le dossier DataExamples lancez dans la console mongo puis tapez la ligne de commande qui suit :
+Dans le dossier **DataExamples** lancez dans la console mongo puis, tapez la ligne de commande qui suit :
 
 --db pour donner un nom à votre base de données.
 --collection indique le nom de votre collection
@@ -137,7 +137,7 @@ Dans le dossier DataExamples lancez dans la console mongo puis tapez la ligne de
 mongoimport --db ny --collection restaurants --file primer-dataset.json --drop
 ```
 
-Vérifiez que vos données sont bien importez :
+Vérifiez que vos données sont bien importées :
 
 ```bash
 show dbs
@@ -146,11 +146,13 @@ use ny
 
 show collections
 restaurants
+
+db.restaurants.count()
 ```
 
-Un document Mongo est un **BJSON** c'est un JSON avec en plus des types pré-définis par Mongo. De plus chaque document Mongo possède une propriété _id dont la valeur est unique.
+Un document Mongo est un **BJSON**, c'est un JSON avec en plus des types pré-définis par Mongo.
 
-Pour faire une sauvegarde d'une collection au format BJSON vous tapez la ligne de commande suivante, la sauvegarde sera faite dans un dossier dump :
+Pour faire une sauvegarde d'une collection au format BJSON tapez la ligne de commande suivante, la sauvegarde se fera dans un dossier dump :
 
 ```bash
 mongodump --collection restaurants --db ny
@@ -205,7 +207,6 @@ $size
 
 /*
 {
-                           
     "content" : [
         { "name" : <string>, year: <number>, by: <string> } 
         ...
@@ -216,18 +217,18 @@ $size
 
 { "content": { $elemMatch: { "name": "Turing Award", "year": { $gt: 1980 } } } }
 
-// recherche avec une Regex 
+// recherche avec une Regex
 $regex
 { "name": { $regex: /^A/ } }
 
 ```
 
-- Combien y a t il de restaurants qui font de la cuisine italienne et qui ont eu un score de 10 ou moins.
-Affichez également le nom, les scores et les coordonnées GPS de ces restaurents. Ordonnez les résultats
+- Combien y a t il de restaurants qui font de la cuisine italienne et qui ont eu un score de 10 ou moins ?
+Affichez également le nom, les scores et les coordonnées GPS de ces restaurants. Ordonnez les résultats
 par ordre décroissant sur les noms des restaurants.
 
-- Quels sont les restaurants qui ont un grade A avec un score supérieur ou égal à 20 ? Affichez les noms et ordonnez les 
-par ordre décroissant. Et donnez le nombre de résultat.
+- Quels sont les restaurants qui ont un grade A avec un score supérieur ou égal à 20 ? Affichez les noms et ordonnez les
+par ordre décroissant. Affichez le nombre de résultat.
 
 - A l'aide de la méthode distinct trouvez tous les quartiers distincts de NY.
 
@@ -239,7 +240,7 @@ db.restaurants.distinct('field', {"key" : "value" })
 
 - Sélectionnez les restaurants dont le grade est A ou B dans le Bronx.
 
-- Même question mais on aimerait que les restaurants qui on eu à la dernière inspection un A ou B. Vous pouvez utilisez la notion d'indice sur la clé grade :
+- Même question mais, on aimerait que les restaurants qui on eu à la dernière inspection un A ou B. Vous pouvez utilisez la notion d'indice sur la clé grade :
 
 ```js
 "grades.2.grade"
@@ -247,7 +248,7 @@ db.restaurants.distinct('field', {"key" : "value" })
 
 - Sélectionnez maintenant tous les restaurants qui ont dans leur mot "Coffee" ou "coffee". De même on aimerait savoir si il y en a uniquement dans le Bronx.
 
--  Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks.
+- Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks.
 
 - Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks dans le Bronx.
 
