@@ -1,38 +1,30 @@
 # Introduction & Présentation
 
-MongoDB est une base de données NoSQL (Not Only SQL) crée en 2007, mature et orientée document.
+MongoDB est une base de données NoSQL (Not Only SQL) crée en 2007, mature et orientée document (fichier BJSON).
 
-Mongo est un DSL domain-specific language. Mongo n'utilise pas le paradigme SQL, il utilise un langage dédié aux données.
+MongoDB est un DSL domain-specific language, il n'utilise pas le paradigme SQL, mais un langage original dédié à l'interrogation des données.
 
-Pour le stockage de données massives qui varient dans le temps. Lorsque la structure des données est connues au préalable et ne bouge pas dans le temps on utilisera de préférence du SQL.
+MonogDB est adapté au stockage de données massives qui peuvent varier dans le temps, son DSL est puissant et permet d'interroger les données facilement. Lorsque la structure des données est connues au préalable et ne bouge pas dans le temps, on utilisera de préférence du SQL.
 
-Dans un projet vous serez amener à utiliser les deux SQL et NoSQL.
+Dans un projet d'application Web vous serez amené à utiliser les deux paradigmes SQL et NoSQL.
 
-Notons également que MongoDB propose un ensemble important de drivers pour pouvoir l'utiliser avec des langage de programmation comme PHP, Python, NodeJS, ...
+Enfin, MongoDB propose un ensemble important de drivers pour les langages comme PHP, JS, Python, ...
 
-## Collection
+## Document et collection
 
-Dans une base de données MongoDB vous manipulerez des **documents**, fichiers **semi-structurés JSON**. Ces derniers sont stockés dans une collection donnée. Pour faire une analogie avec SQL le document ou la collection représenterait une table qui est rangée dans une base de données.
+Dans une base de données MongoDB vous manipulerez des **documents**, fichiers **semi-structurés BJSON** dont les propriétés sont typées. BJSON est un binaire qui permet d'interroger les données plus rapidement.
+
+Les documents sont stockés dans une collection.
 
 ## Modélisation des données
 
-MongoDB ne gère aucun schéma de données (complète flexibilité ), les collections n'ont donc pas de structure pré-déterminée ou fixe.
+MongoDB ne gère aucun schéma de données ( complète flexibilité ), les collections n'ont donc pas de structure pré-déterminée ou fixe, elles peuvent donc évoluer dans le temps. Dans un document, des champs peuvent être ajoutés, supprimés, modifiés et renommés à tout moment...
 
-Un document est un élément d'une collection.
+Le modèle des documents est basé sur un système de **clé/valeur**. Chaque valeur peut être de type sclaraire, c'est-à-dire des entiers,numériques, chaîne de caractères, boléens ou la valeur particulière null. Ces valeurs peuvent également comporter des listes de valeurs ou même des documents imbriqués.
 
-Dans un document, des champs peuvent être ajoutés, supprimés, modifiés et renommés à tout moment...
+Résumons ces types pour les valeurs des clés : null, boolean, numeric, string, array et object.
 
-Le modèle est basé sur un système de **clé/valeur**.
-
-Chaque valeur peut être de type sclaraire, c'est-à-dire des entiers,numériques, chaîne de caractères, boléens ou la valeur particulière null.
-
-Ces valeurs peuvent également comporter des listes de valeurs ou même des documents imbriqués.
-
-Mongo possède un langage d'interrogation original et spécifique.
-
-Résumons ces types pour les valeurs des clés :
-
-null, boolean, numeric, string, array et object.
+Ci-dessous un exemple de document :
 
 ```json
 {
@@ -61,25 +53,21 @@ null, boolean, numeric, string, array et object.
 }
 ```
 
-Remarque : chaque document Mongo possède une clé unique **_id**, le type de  valeur par défaut est **ObjectId**, mais peut être de n'importe quel type. La valeur de ce champ doit cependant être unique.
-
-Nous verrons plus tard comment à partir de données relationnelles nous pouvons les implémenter dans un modèle NoSQL de type document comme dans MongoDB.
+Remarque : chaque document possède une clé unique **_id**, le type de  valeur par défaut est un **ObjectId**, mais peut être de n'importe quel type scalaire. La valeur de ce champ doit cependant être unique dans le document.
 
 ## Installation
 
-Nous pouvons utiliser un interpréteur graphique comme par exemple [Studio3T](https://studio3t.com/).
+Nous pouvons utiliser un interpréteur graphique comme par exemple [Studio3T](https://studio3t.com/). Ou utilisez MongoDB dans la console avec son interpréteur JS.
 
 ### Windows
 
-Ou utilisez Mongo sur sa machine en ligne de commande, voir dans ce cas la page suivante : [Mongo install](https://docs.mongodb.com/manual/installation/)
+Installation : [Mongo install](https://docs.mongodb.com/manual/installation/)
 
-Vous devriez avoir un installer à l'adresse suivante : [installer](https://www.mongodb.com/try/download/community)
+Installeur : [installer](https://www.mongodb.com/try/download/community)
 
-Suivez les étapes de l'installation et précisez le dossier data pour vos bases de données sur votre machine.
+Suivez les étapes de l'installation et précisez le dossier **data** pour le stockage des bases de données sur votre machine.
 
-Puis lancez le serveur dans votre console comme suit, vous pouvez également modifier vos variables d'environnement pour accèder à Mongo plus rapidement :
-
-Démarrez le serveur et connectez vous au serveur :
+Puis lancez le serveur dans votre console comme suit, vous pouvez également modifier vos variables d'environnement pour y accèder plus rapidement :
 
 ```bash
 # démarrer le serveur
@@ -91,17 +79,17 @@ Démarrez le serveur et connectez vous au serveur :
 
 ### Mac
 
-Vous devez d'abord installer brew. Puis à l'aide de cet outils tapez les lignes de commandes suivantes dans un terminal :
+Vous devez d'abord installer **brew**. Puis tapez les lignes de commandes suivantes dans un terminal :
 
 ```bash
 
 brew tap mongodb/brew
 brew install mongodb-community
 
-# Créer le dossier pour les bases de données Mongo
+# Créer le dossier pour les bases de données MongoDB
 sudo mkdir -p /data/db
 
-# permissions pour travailler avec le dossier des bases de données
+# Permissions pour travailler avec le dossier des bases de données
 sudo chown -R `id -un` /data/db
 
 # start mongo (serveur)
@@ -113,13 +101,14 @@ mongo --version
 # se connecter au serveur
 mongo
 ```
-Le fichier de configuration de Mongo se trouve à l'adresse suivante :
+
+Théoriquement le fichier de configuration se trouve à l'adresse suivante :
 
 ```txt
 /usr/local/etc/mongod.conf
 ```
 
-Le contenu de ce fichier vous renseignera sur la configuration de Mongo sur votre machine :
+Contenu du fichier :
 
 ```txt
 systemLog:
@@ -132,61 +121,59 @@ net:
   bindIp: 127.0.0.1
 ```
 
-
 ### Linux
 
-Installez dans un premier temps MongoDB sur votre machine et connectez vous au serveur de base de données en ligne de commande. Dans un terminal tapez :
-
-D'abord il faut démarrer le serveur Mongo, sous Linux il faut tapez la ligne de commande suivante :
+Installez MongoDB avec apt-get puis lancez le serveur comme suit :
 
 ```bash
 sudo systemctl start mongod
 ```
 
-Puis tapez la ligne de commande suivante pour rentrer sur le serveur Mongo. Vous aurez ainsi accès à l'interpréteur JS de MongoDB pour lancer vos commandes. Vous pourrez donc écrire du JS et des commandes Mongo :
+Dans un terminal coonectez-vous au serveur
 
 ```bash
 mongo
 >
 ```
 
-Mongo possède une base de données par défaut : test. Nous allons voir comment se connecter et créer une base de données.
+## Exemples de commandes MongoDB
 
-## Commandes MongoDB
-
-Une fois connecter sur votre serveur MongoDB. Vous avez accès aux commandes CLI. Notez que pour se déconnecter il faudra tapez la ligne de commande suivante :
+Une fois connecté sur votre serveur MongoDB, vous avez accès aux commandes CLI. Notez que pour se déconnecter il faudra tapez la ligne de commande suivante :
 
 ```bash
 quit()
 ```
 
-### Commandes de base
+Dans le serveur :
 
 ```js
-//Affichez les bases de données dans le serveur
+//Affichez les bases de données
 show dbs
 
-// Connexion ou création d'une base de données restaurants
+// Connexion et/ou création d'une base de données restaurants
 use restaurants
 
-// Connaitre le nom de la base de données
+// Connaitre le nom de la base de données sur laquelle on est connecté
 db
 
-// Une fois dans une base de données voir les collections JSON
+// Une fois dans une base de données voir les collections
 show collections
 
 // renommer une collection addresses en address
 db.addresses.renameCollection("address")
 
-// supprime une collection
+// Supprimer l'ensemble des documents dans une collection
+db.address.remove({})
+
+// Supprimer physiquement une collection
 db.address.drop()
 
-// supprime la base de données actuelle (use restaurants)
+// Supprimer la base de données actuelle (restaurants)
 db.dropDatabase()
 ```
 
 ## Outils graphique Robo 3T
 
-Vous pouvez également installer un outils graphique Robo 3T : https://robomongo.org/download. Attention, Robo 3T est gratuit pas studio 3T. 
+Vous pouvez également installer un outils graphique Robo 3T : https://robomongo.org/download. Attention, Robo 3T est gratuit pas studio 3T.
 
-Cet outils est intéressant mais, nous pouvons cependant travailler directement dans la console avec mongo. Ce dernier intègre toutes les commandes MongoDB et un interpréteur Javascript.
+Cet outils est intéressant mais, nous pouvons cependant travailler directement dans un terminal. Ce dernier intègre toutes les commandes MongoDB et un interpréteur Javascript. Dans ce cours nous préférons cette dernière approche.

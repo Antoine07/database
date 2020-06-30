@@ -1,4 +1,6 @@
-# Exercices supplémentaires
+# CRUD create/read/update/delete avec MongoDB avec la base de données shop
+
+## Exercices inventory
 
 Pour les exercices suivants créer un fonction de type cursor :
 
@@ -6,7 +8,7 @@ Pour les exercices suivants créer un fonction de type cursor :
 const myCursor = args => db.collection.find(args)
 ```
 
-Utilisez également la méthode sort quand c'est nécessaire pour trier vos résultats, notez que cette fonction admet un paramètre key qui peut être multiple :
+Utilisez également la méthode sort quand c'est nécessaire pour trier vos résultats, notez que cette fonction admet un paramètre key qui peut être multiple plusieurs propriétés :
 
 ```js
 const myCursor = args => db.collection.find(args).sort({key : 1})
@@ -16,35 +18,35 @@ Créez une base de données **shop** et insérez les données suivantes :
 
 ```js
 db.inventory.insertMany( [
-   { 
-      "sale" : true, "price" : 0.99, 
-      "society" : "Alex", type: "postcard", qty: 19, 
-      size: { h: 11, w: 29, uom: "cm" }, 
-      status: "A", 
+   {
+      "sale" : true, "price" : 0.99,
+      "society" : "Alex", type: "postcard", qty: 19,
+      size: { h: 11, w: 29, uom: "cm" },
+      status: "A",
       tags: ["blank", "blank", "blank"], "
       year" : 2019  
     },
    { 
-       "sale" : false, 
-       "price" : 1.99, 
-       "society" : "Alan", 
-       type: "journal", 
-       qty: 25, 
-       size: { h: 14, w: 21, uom: "cm" }, 
-       status: "A", 
-       tags: ["blank", "red", "blank", "blank"], 
+       "sale" : false,
+       "price" : 1.99,
+       "society" : "Alan",
+       type: "journal",
+       qty: 25,
+       size: { h: 14, w: 21, uom: "cm" },
+       status: "A",
+       tags: ["blank", "red", "blank", "blank"],
        "year" : 2019  
    },
     { 
-       "sale" : true, 
-       "price" : 1.5, 
-       "society" : "Albert", 
-       type: "notebook", 
-       qty: 50, 
-       size: { h: 8.5, w: 11, uom: "in" }, 
+       "sale" : true,
+       "price" : 1.5,
+       "society" : "Albert",
+       type: "notebook",
+       qty: 50,
+       size: { h: 8.5, w: 11, uom: "in" },
        status: "A",  
-       tags: ["gray"], 
-       year : 2019 
+       tags: ["gray"],
+       year : 2019
    },
    { 
        "sale" : true, 
@@ -161,20 +163,7 @@ Vous pouvez utiliser l'opérateur d'existance de Mongo pour vérifier que la pro
 
 10. Affichez le nom des sociétés qui ont le tag blank.
 
-## Retourner uniquement certains champs
-
-Vous pouvez également retourner que certains champs du document à l'aide de la syntaxe suivante :
-
-```js
-db.students.find(
-   { },
-   { "type" : 1, "society" : 1 }
-)
-```
-
 ## Modification du curseurs
-
-Vous pouvez également utiliser les méthodes suivantes :
 
 ```js
 // Retourne la collection à partir du 6 documents
@@ -188,39 +177,6 @@ Les méthodes combinées suivantes modifiants le curseur sont équivalentes (mê
 ```js
 db.students.find().sort( { name: 1 } ).limit( 5 )
 db.students.find().limit( 5 ).sort( { name: 1 } )
-```
-
-La méthode count permet d'agréger les documents et de les comptés :
-
-```js
-db.students.count()
-```
-
-## Projection
-
-Le deuxième paramètre de la fonction find permet de définir une projection. Ici on n'affichera que le nom des sociétés qui ont un prix égale à 0.99.
-
-```js
-// projection et restriction
-db.inventory.find({"price" : 0.99}, {"society": 1})
-```
-
-Notez que si vous utilisez la valeur 0 à la place de 1 alors vous excluez ce champ mais vous récupérez alors tous les autres :
-
-```js
-db.inventory.find({"price" : 0.99}, {"society": 0})
-```
-
-La structure d'une requête avec find ou findOne est donc (à retenir) :
-
-```js
-db.collection.findOne(query, projection)
-```
-
-La méthode pretty permettra un affichage plus lisible en console :
-
-```js
-db.collection.findOne(query, projection).pretty()
 ```
 
 ## Mettre à jour un document dans une collection
@@ -241,7 +197,7 @@ db.inventory.drop()
 
 - Exemple de modification avec la méthode updateOne
 
-Structure : 
+Structure :
 
 - critère de recherche
 
@@ -259,7 +215,7 @@ db.inventory.updateOne(
 )
 ```
 
-Si vous souhaitez que Mongo crée un nouveau champ si il ne trouve pas de correspondance ajouter l'option upsert : true 
+Si MongoDB ne trouve pas le document, vous pouvez ajouter la propriété upsert qui permet de créer une ligne supplémentaire dans le document :
 
 ```js
 db.inventory.updateOne(
@@ -270,16 +226,14 @@ db.inventory.updateOne(
    },
     {"upsert": true}
 )
-```
 
-Un nouveau document sera alors ajouté :
-
-```js
-db.inventory.find({}, { status : 1 })
+// Nouveau document
  // { "_id" : ObjectId("5ef43c659c3a4c119caf7ef5"), "status" : "SUPER" }
+
+
 ```
 
-Vous pouvez également mettre à jour plusieurs documents en même temps :
+Vous pouvez également mettre à jour plusieurs documents en même temps à l'aide de la méthode suivante :
 
 collection.updateMany()
 
@@ -310,7 +264,7 @@ db.collection.find().forEach(<function>)
 
 ## Méthode unset
 
-Vous pouvez également supprimer un champ d'un document à l'aide de l'opérateur unset, ci-dessous on supprime les champs qty et status du premier document qui match avec status recherché :
+Vous pouvez également supprimer un champ d'un document à l'aide de l'opérateur unset, ci-dessous on supprime les champs qty et status du premier document qui match avec le status recherché :
 
 ```js
 db.inventory.updateOne(
@@ -320,7 +274,7 @@ db.inventory.updateOne(
 )
 ```
 
-Notez que vous pouvez également ajouter un champ avec l'opérateur set :
+Notez que vous pouvez également ajouter un nouveau champ avec l'opérateur set :
 
 ```js
 
@@ -338,10 +292,9 @@ Dans la collection inventory il y a un champ level qu'il faut supprimer, aidez-v
 
 Vérifiez avec Mongo que le champ est bien supprimé.
 
-
 ## Opérateur switch
 
-Vous pouvez avec Mongo utiliser un opérateur switch afin de modifier un document :
+Vous pouvez utiliser un opérateur switch afin de modifier un document :
 
 ```js
    $switch: {
@@ -355,11 +308,11 @@ Vous pouvez avec Mongo utiliser un opérateur switch afin de modifier un documen
 }
 ```
 
-Attention, cependant au fait suivant : Dès que Mongo rentre dans un cas pour modifier une propriété on sort du switch/case.
+Attention, dès que l'on rentre dans un cas pour modifier une propriété on sort du switch/case.
 
 ## Exercice switch
 
-Vous pouvez sur un champ particulier compter le nombre d'élément(s) à l'aide de l'opérateur **size**, dans ce cas le champ sur lequel vous compterez sera pré-fixé par un dollar. Ci-dessous en supposant que tags soit un tableau on compte son nombre d'élément(s).
+L'opérateur size permet de compter le nombre d'élément dans un array. Il faut cependant pré-fixer la propriété avec un dollar pour utiliser cet opérateur :
 
 ```js
 { $size :  "$tags" }
@@ -371,18 +324,17 @@ Ajoutez une propriété **grade** au document inventory pour les documents ayant
 - si le nombre de tags est strictement supérieur à 3 : AA
 - Et B sinon.
 
-
 ## db.collection.deleteOne
 
-La méthode suivante permet de supprimer un document :
+La méthode suivante permet de supprimer un document à l'aide d'une condition :
 
 ```js
  db.orders.deleteOne( { "_id" : ObjectId("563237a41a4d68582c2509da") } );
 ```
 
-Vous pouvez également supprimer des documents selon des conditions précises. Dans l'exemple qui suit on supprime le premier document.
-
 ### Exercice d'application
+
+Insérez le document suivant dans la collection inventory :
 
 ```js
 
@@ -393,7 +345,7 @@ db.inventory.insertOne( {
 })
 ```
 
-Pour récupérez le dernier document insérer tapez la ligne de commande suivante :
+Pour récupérez le dernier document inséré tapez la ligne de commande suivante :
 
 ```js
 db.inventory.find().sort({_id: -1}).limit(1);
@@ -409,20 +361,20 @@ Vérifiez que ce document est bien supprimé de la collection.
 
 ## db.collection.deleteMany
 
-Cette méthode est structurée de la même manière que la précédente et permet de supprimer tous les documents répondant au critère de recherche.
+Cette méthode permet de supprimer plusieurs documents à l'aide d'un critère de sélection.
 
 ## Exercice synthèse
 
-1. Créez un champ **created_at** et **expired_at** pour chaque document de la collection inventory. 
+1. Hydratation. Créez les champs **created_at** et **expired_at** pour chaque document de la collection inventory.
 
-Vous utiliserez la méthode ISODate de Mongo et Date de JS pour générer des dates aléatoires.
+Vous utiliserez la méthode ISODate pour créer une date aléatoire.
 
-Notez que ISODate est basée sur l'UTC, si vous écrivez new Date() ou ISODate Mongo affichera dans tous les cas une ISODate. Le décallage de date peut s'effectuer à l'aide de la méthode getTime :
+Décallage d'un jour par rapport à la date actuelle :
 
 ```js
-// Pour un jour 
+// Pour un jour
 // 1 x 24 hours x 60 minutes x 60 seconds x 1000 milliseconds
-let day = 1*24*60*60*1000 
+let day = 1*24*60*60*1000
 
 // Ajoute un jour à la date actuel
 new Date( ISODate().getTime() + day )
@@ -437,6 +389,6 @@ Vous utiliserez les opérateurs suivants, notez que la différence sera données
 $subtract
 
 // Pour calculer le nombre de jour
-$divide 
+$divide
 
 ```

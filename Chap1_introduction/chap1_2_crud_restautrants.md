@@ -1,4 +1,4 @@
-# Commandes CRUD avec Mongo
+# CRUD create/read/update/delete avec MongoDB avec la base de données ny
 
 ## Création d'une base de données
 
@@ -13,7 +13,7 @@ Si vous avez installé Robo 3T vous pouvez également créer la base de données
 
 ## Insertion de données
 
-Création la collection authors dans la base de données school
+Créez la collection authors dans la base de données school
 
 ```js
 db.createCollection("authors")
@@ -50,13 +50,11 @@ db.authors.insert([
 )
 ```
 
-Remarques : si on ne précise pas de propriété _id dans le document alors Mongo la crée et un ObjectId est créé (hash unique pour identifier le document dans la collection). De plus si la collection n'extiste pas elle est créée.
+Remarques : si on ne précise pas de propriété _id dans le document, il sera automatiquement créé. Celui-ci est de type ObjectId (voir ci-après pour sa définition précise).
 
 Les méthodes **insertMany** et **insertOne** permettent respectivement d'insérer plusieurs ou un document unique.
 
-Lorsque vous créer un nouveau document dans une collection Mongo crée un _id unique.
-
-Vous pouvez donner une valeur particulière à la propriété _id lors de la création mais, attention elle doit être unique sinon Mongo vous empêchera d'écraser l'ancien document :
+Création d'un document avec un ObjectId :
 
 ```js
 db.authors.insert(
@@ -64,9 +62,9 @@ db.authors.insert(
 )
 ```
 
-Vous pouvez créer votre propre _id avec une valeur de type scalaire (non mutable). Les scalaires sont des variables qui contiennent des numériques, des chaînes de caractères ou des booléens. Les types array, object et resource ne sont pas scalaires, ils sont mutables.
+Vous pouvez créer votre propre _id avec une valeur de type scalaire (non mutable). Les scalaires sont des variables qui contiennent des numériques, des chaînes de caractères ou des booléens. Les types array, object et resource ne sont pas des scalaires, ils sont mutables et ne peuvent pas être utilisés comme un identifiant pour le document.
 
-- Précisions sur l'objet ObjectId de Mongo qui crée un identifiant unique.
+- Précisions sur l'objet ObjectId
 
 Il est codé sur 12 bytes :
 
@@ -75,7 +73,7 @@ Il est codé sur 12 bytes :
 - 2 bytes pour représenter l’identifiant du processus.
 - 3 bytes qui représentent un compteur qui démarre à un numéro aléatoire.
 
-Essayez dans la console de tapez la ligne de code suivante :
+Tapez les lignes de code suivantes :
 
 ```js
 const _id = ObjectId()
@@ -125,7 +123,7 @@ Récupérez les données dans un dossier **DataExamples** :
 
 https://raw.githubusercontent.com/mongodb/docs-assets/primer-dataset/primer-dataset.json
 
-Dans le dossier **DataExamples** lancez dans la console mongo puis, tapez la ligne de commande qui suit :
+Dans le dossier **DataExamples** et dans un terminal ouvert dans ce dossier tapez la ligne de commande ci-dessous :
 
 --db pour donner un nom à votre base de données.
 --collection indique le nom de votre collection
@@ -150,15 +148,100 @@ restaurants
 db.restaurants.count()
 ```
 
-Un document Mongo est un **BJSON**, c'est un JSON avec en plus des types pré-définis par Mongo.
-
-Pour faire une sauvegarde d'une collection au format BJSON tapez la ligne de commande suivante, la sauvegarde se fera dans un dossier dump :
+Pour faire une sauvegarde d'une collection au format BJSON tapez la ligne de commande suivante, la sauvegarde se fera dans un dossier dump, dans le dossier où votre terminal a été ouvert.
 
 ```bash
 mongodump --collection restaurants --db ny
 ```
 
-### Filtrage
+## Sélectionner des données méthode find
+
+L'instruction suivante correspond à un SELECT * FROM restaurants en SQL :
+
+```js
+db.restaurants.find( {} )
+```
+
+En SQL on peut faire des sélections précises à l'aide d'une restriction :
+
+```sql
+SELECT * FROM restaurants WHERE cuisine = "Delicatessen"
+```
+
+En MongoDB cela donnerait :
+
+```js
+db.restaurants.find( { cuisine: "Delicatessen" } )
+
+```
+
+Structure de la méthode find query correspond à la projection :
+
+```js
+db.collection.findOne(query, restriction).pretty()
+```
+
+### Opérateur IN
+
+Vous pouvez également utiliser les query operators comme dans l'exemple suivant, ici on cherche à sélectionner les types de cuisines Delicatessen ou American dans la collection restaurants
+
+```js
+db.restaurants.find( { cuisine: { $in [ "Delicatessen", "American" ] } } )
+
+```
+
+Cet opérateur est similaire à l'opérateur IN de SQL.
+
+### Opérateurs AND et OR
+
+On peut également utiliser un opérateur logique ET comme suit :
+
+```js
+db.restaurants.find( { "borough" : "Brooklyn", "cuisine" : "Hamburgers" } )
+
+// De manière équivalente
+db.restaurants.find( { $and : [ { "borough" : "Brookyn"}, { "cuisine" : "Hamburgers" } ] } )
+
+```
+
+Syntaxe or :
+
+```js
+// { $or: [ { <expression1> }, { <expression2> }, ... , { <expressionN> } ] }
+
+// Exemple sur la table authors
+db.authors.find( { $or: [ { name: "Alan" }, { name: "Alice" } ] } )
+```
+
+Voici un exemple de condition logique en utilisant OR et AND. Remarquez le deuxième argument de la méthode find, il permet de faire une projection, c'est-à-dire de sélectionner uniquement certaine(s) propriété(s) du document :
+
+```js
+
+db.restaurants.find( {
+     borough: "Brooklyn",
+     $or: [ { name: /^B/ }, { name : /^W/} ]
+}, {"name" : 1, "borough" : 1} )
+
+```
+
+Cela correspondrait en SQL à la requête suivante :
+
+```sql
+SELECT
+`name`,
+borough
+FROM restaurants
+WHERE borough = "Brooklyn" 
+AND ( `name` LIKE '/^B/' OR `name` LIKE '/^W/')
+```
+
+Mongo permet de construire facilement des requêtes pour extraire des données.
+
+## Exercice compter le nombre de restaurants
+
+Sans utiliser la méthode count dans un premier temps comptez le nombre de restaurants dans le quartier de Brooklyn. Puis comparez le résultat avec la méthode count.
+
+### Exercices sur la notion de filtrage
 
 Exemple de filtres classiques :
 
@@ -178,8 +261,8 @@ D'autres filtres :
 $ne
 "number" : {"$ne" : 10}
 
-// fait partie de 
-$in, $nin 
+// fait partie de ...
+$in, $nin
 "notes" : {"$in" : [10, 12, 15, 18] }
 "notes" : {"$nin" : [10, 12, 15, 18] }
 
@@ -246,12 +329,11 @@ db.restaurants.distinct('field', {"key" : "value" })
 "grades.2.grade"
 ```
 
-- Sélectionnez maintenant tous les restaurants qui ont dans leur mot "Coffee" ou "coffee". De même on aimerait savoir si il y en a uniquement dans le Bronx.
+- Sélectionnez maintenant tous les restaurants qui ont le mot "Coffee" ou "coffee" dans la propriété name du document.
 
 - Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks.
 
 - Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks dans le Bronx.
-
 
 ## Recherche par rapport à la date
 
@@ -264,6 +346,7 @@ db.restaurants.find({
 }, { "_id" : 0, "name" : 1, "borough" : 1, "grades.date" : 1} )
 ```
 
+## Lire un document entièrement
 
 La méthode find permet de lire les documents dans une collection, elle ne vous retournera que 20 documents au maximun par défaut :
 
@@ -271,7 +354,9 @@ La méthode find permet de lire les documents dans une collection, elle ne vous 
 db.restaurants.find()
 ```
 
-Pour lire un document vous pouvez utiliser le curseur de la méthode find :
+Dans le terminal vous pouvez utiliser la commande it pour avancer dans la lecture du document.
+
+- Utilisation d'un curseur pour lire le document :
 
 ```js
 const resCursor1 = db.restaurants.find();
@@ -285,7 +370,7 @@ Avec la méthode foreEach :
 
 ```js
 
-const resCursor2 =  db.restaurants.find(  );
+const resCursor2 =  db.restaurants.find();
 
 resCursor2.forEach(printjson);
 
@@ -298,81 +383,3 @@ const resCursor3 = db.restaurants.find(   );
 const resArray = resCursor3.toArray();
 print( resArray[3].name );
 ```
-
-## Sélectionner des données
-
-L'instruction suivante correspond à un SELECT * FROM restaurants en SQL :
-
-```js
-db.restaurants.find( {} )
-```
-
-En SQL on peut faire des sélections :
-
-```sql
-SELECT * FROM restaurants WHERE cuisine = "Delicatessen"
-```
-
-En Mongo cela donnerait :
-
-```js
-db.inventory.find( { cuisine: "Delicatessen" } )
-
-```
-
-### Opérateur IN
-
-Vous pouvez également utiliser les query operators comme dans l'exemple suivant, ici on chercher a sélectionner les types de cuisines Delicatessen ou American :
-
-```js
-db.inventory.find( { cuisine: { $in [ "Delicatessen", "American" ] } } )
-
-```
-
-Cet opérateur est équivalent à l'opérateur IN de SQL.
-
-### Opérateurs AND et OR
-
-On peut également utiliser un opérateur logique ET comme suit :
-
-```js
-db.restaurants.find( { "borough" : "Brooklyn", "cuisine" : "Hamburgers" } )
-
-```
-
-La syntaxe de l'opérateur OR s'écrira :
-
-```js
-// { $or: [ { <expression1> }, { <expression2> }, ... , { <expressionN> } ] }
-
-// Exemple sur la table authors
-db.authors.find( { $or: [ { name: "Alan" }, { name: "Alice" } ] } )
-```
-
-Voici un exemple de condition logique en utilisant OR et AND. Remarquez le deuxième argument de la méthode find, il permet de faire une projection, c'est-à-dire de sélectionner uniquement certaine(s) propriété(s) du document :
-
-```js
-
-db.restaurants.find( {
-     borough: "Brooklyn",
-     $or: [ { name: /^B/ }, { name : /^W/} ]
-}, {"name" : 1, "borough" : 1} )
-
-```
-
-Cela correspondrait en SQL à la requête suivante :
-
-```sql
-SELECT
-`name`,
-borough
-FROM restaurants
-WHERE borough = "Brooklyn" 
-AND ( `name` LIKE '/^B/' OR `name` LIKE '/^W/')
-```
-
-Mongo permet de construire facilement des requêtes pour extraire des données.
-
-## Exercice compter le nombre de restaurants
-
-Sans utiliser la méthode count dans un premier temps comptez le nombre de restaurants dans le quartier de Brooklyn. Puis comparez le résultat avec la méthode count.
