@@ -26,6 +26,8 @@ Résumons ces types pour les valeurs des clés : null, boolean, numeric, string,
 
 Ci-dessous un exemple de document :
 
+\newpage
+
 ```json
 {
   "students" : [
@@ -171,6 +173,8 @@ db.address.drop()
 // Supprimer la base de données actuelle (restaurants)
 db.dropDatabase()
 ```
+
+\newpage
 
 ## Outils graphique Robo 3T
 
