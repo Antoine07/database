@@ -12,7 +12,7 @@ Enfin, MongoDB propose un ensemble important de drivers pour les langages comme 
 
 ## Document et collection
 
-Dans une base de données MongoDB vous manipulerez des **documents**, fichiers **semi-structurés BJSON** dont les propriétés sont typées. BJSON est un **binaire** qui permet d'interroger les données plus rapidement.
+Dans une base de données MongoDB vous manipulerez des **documents**, fichiers semi-structurés BJSON dont les propriétés sont typées. BJSON est un **binaire** qui permet d'interroger les données plus rapidement.
 
 Les documents sont stockés dans une collection qui se trouve dans une base de données sur un serveur MongoDB.
 
@@ -21,8 +21,6 @@ Les documents sont stockés dans une collection qui se trouve dans une base de d
 MongoDB ne gère **aucun schéma de données** il est orienté flexibilité, les collections n'ont donc pas de structure pré-déterminée ou fixe, elles peuvent donc **évoluer dans le temps**. Dans un document, des champs peuvent être ajoutés, supprimés, modifiés et renommés à tout moment ...
 
 Le modèle des documents est basé sur un système de **clés/valeurs**. Chaque valeur peut être de type sclaraire, c'est-à-dire des numériques, chaîne de caractères, boléens ou la valeur particulière null. Ces valeurs peuvent également comporter des listes de valeurs ou même des documents imbriqués.
-
-Résumons ces types pour les valeurs des clés : null, boolean, numeric, string, array et object.
 
 Ci-dessous un exemple de document :
 
@@ -55,11 +53,12 @@ Ci-dessous un exemple de document :
 }
 ```
 
-Remarque : chaque document possède obligatoirement une clé unique **_id**, le type de valeur par défaut est un **ObjectId**, mais peut être de n'importe **quel type scalaire**. La valeur de ce champ doit cependant **être unique** dans le document et bien sûr non mutable comme un array ou un objet par exemple.
+Remarque : chaque document possède obligatoirement une clé unique _id, le type de cette propriété est par défaut **ObjectId**, mais peut être de n'importe **quel type scalaire**. La valeur de ce champ doit cependant **être unique** dans le document et bien sûr non mutable. Vous ne pouvez pas définir par exemple cette clé avec un array ou un objet qui sont des valeurs mutables.
 
 ## Installation
 
-Nous pouvons utiliser un interpréteur graphique comme par exemple Robo 3T (voir fin du document). Ou utilisez MongoDB dans la console avec son interpréteur JS. C'est cette dernière approche que nous utiliserons.
+Nous pouvons utiliser un interpréteur graphique comme Robo 3T (voir fin du document). Ou utilisez MongoDB directement en console avec son interpréteur JS. C'est cette 
+configuration que nous utiliserons dans le cours.
 
 ### Windows
 
@@ -69,7 +68,7 @@ Installeur : [installer](https://www.mongodb.com/try/download/community)
 
 Suivez les étapes de l'installation et précisez le dossier **data** pour le stockage des bases de données sur votre machine.
 
-Puis lancez le serveur dans votre console comme suit, vous pouvez également modifier vos variables d'environnement pour y accèder plus rapidement depuis n'importe où.
+Puis lancez le serveur dans votre console comme suit, notez également que vous pouvez modifier vos variables d'environnement afin d'y accèder plus rapidement sur votre machine.
 
 ```bash
 # démarrer le serveur
@@ -140,13 +139,13 @@ mongo
 
 ## Exemples de commandes MongoDB
 
-Une fois connecté sur votre serveur MongoDB, vous avez accès aux commandes CLI. Notez que pour se déconnecter il faudra tapez la ligne de commande suivante :
+Une fois connecté sur votre serveur MongoDB, vous avez accès aux commandes CLI (command line interface). Pour quitter le serveur vous taperez dans MongoDB :
 
 ```bash
 quit()
 ```
 
-Dans le serveur (une fois le serveur lancé et connecté au serveur) :
+Sur le serveur Mongo :
 
 ```js
 //Affichez les bases de données
@@ -178,6 +177,4 @@ db.dropDatabase()
 
 ## Outils graphique Robo 3T
 
-Vous pouvez également installer un outils graphique Robo 3T : https://robomongo.org/download. Attention, Robo 3T est gratuit pas studio 3T.
-
-Cet outils est intéressant mais, nous pouvons cependant travailler directement dans un terminal. Ce dernier intègre toutes les commandes MongoDB et un interpréteur Javascript. Dans ce cours nous préférons cette dernière approche.
+Vous pouvez également installer un outils graphique Robo 3T (gratuit) : https://robomongo.org/download.

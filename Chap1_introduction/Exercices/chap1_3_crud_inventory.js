@@ -65,7 +65,7 @@ cursorInventor( { tags : { $exists : true }}).sort({ society : 1}).sort({society
     print(`Society : ${society} tags :${tags.join(" ")}`)
 })
 
-//10. Affichez le nom des sociétés qui ont le tag blank.
+//10. Affichez le nom des sociétés qui ont au moins un tag blank.
 
 cursorInventor( { tags : "blank"} ).sort({ society : 1}).sort({society : 1}).forEach( invent => {
     const { tags, society } = invent;

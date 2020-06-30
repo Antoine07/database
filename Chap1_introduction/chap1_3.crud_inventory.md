@@ -2,16 +2,16 @@
 
 ## Exercices inventory
 
-Pour les exercices suivants créer un fonction de type cursor :
+Pour les exercices suivants créer un fonction de type cursor en JS :
 
 ```js
 const myCursor = args => db.collection.find(args)
 ```
 
-Utilisez également la méthode sort quand c'est nécessaire pour trier vos résultats, notez que cette fonction admet un paramètre key qui peut être multiple plusieurs propriétés :
+Vous pouvez également trier vos documents à l'aide de la méthode sort :
 
 ```js
-const myCursor = args => db.collection.find(args).sort({key : 1})
+const myCursorSort = (args, key) => db.collection.find(args).sort(key)
 ```
 
 Créez une base de données **shop** et insérez les données suivantes :
@@ -118,7 +118,7 @@ db.inventory.insertMany( [
 
 ```
 
-1. Affichez tous les articles de type journal. Et donnez la quantité total de ces articles (propriété qty).
+1. Affichez tous les articles de type journal. Et donnez la quantité total de ces articles (propriété qty). Pensez à faire un script en JS.
 
 2. Affichez les noms de sociétés depuis 2018 ainsi que leur quantité.
 
@@ -126,7 +126,7 @@ db.inventory.insertMany( [
 
 Vous utiliserez une expression régulière classique : /^A/
 
-4. Affichez le nom des sociétés dont la quantité d'article est supérieur à 45.
+4. Affichez le nom des sociétés dont la quantité d'articles est supérieur à 45.
 
 Utilisez les opérateurs supérieur ou inférieur :
 
@@ -161,7 +161,7 @@ Vous pouvez utiliser l'opérateur d'existance de Mongo pour vérifier que la pro
 { field: { $exists: <boolean> } }
 ```
 
-10. Affichez le nom des sociétés qui ont le tag blank.
+10. Affichez le nom des sociétés qui ont au moins un tag blank.
 
 ## Modification du curseurs
 
@@ -181,15 +181,15 @@ db.students.find().limit( 5 ).sort( { name: 1 } )
 
 ## Mettre à jour un document dans une collection
 
-Repartons de la collection inventory, la méthode updateOne permet de mettre le premier document pour lequel le critère de recherche est trouvé à jour.
+Repartons de la collection inventory, la méthode updateOne permet de modifier un document selon un critère de recherche.
 
-Remarque si vous souhaitez supprimer les documents dans la collection vous taperez la commande suivante :
+Remarque : pour supprimer l'ensemble des documents dans une collection utilisez la syntaxe suivante.
 
 ```js
 db.inventory.remove({})
 ```
 
-Par contre si vous souhaitez supprimez la collection, utilisez la méthode drop :
+Pour supprimer la collection elle-même, utilisez la méthode drop :
 
 ```js
 db.inventory.drop()
@@ -203,7 +203,7 @@ Structure :
 
 - Modification avec l'opérateur set
 
-Supposons que l'on veuille mettre à jour certains champs d'un document en particulier. Mongo ne crée pas de document supplémentaire dans ce cas si il ne trouve pas de document dans la collection :
+Dans l'exemple suivant on modifie le premier document trouvé dont le status vaut B :
 
 ```js
 db.inventory.updateOne(
@@ -215,7 +215,7 @@ db.inventory.updateOne(
 )
 ```
 
-Si MongoDB ne trouve pas le document, vous pouvez ajouter la propriété upsert qui permet de créer une ligne supplémentaire dans le document :
+Si MongoDB ne trouve pas le document, vous pouvez ajouter la propriété upsert qui permet de créer une ligne supplémentaire dans le document.
 
 ```js
 db.inventory.updateOne(
@@ -229,8 +229,6 @@ db.inventory.updateOne(
 
 // Nouveau document
  // { "_id" : ObjectId("5ef43c659c3a4c119caf7ef5"), "status" : "SUPER" }
-
-
 ```
 
 Vous pouvez également mettre à jour plusieurs documents en même temps à l'aide de la méthode suivante :
@@ -264,7 +262,7 @@ db.collection.find().forEach(<function>)
 
 ## Méthode unset
 
-Vous pouvez également supprimer un champ d'un document à l'aide de l'opérateur unset, ci-dessous on supprime les champs qty et status du premier document qui match avec le status recherché :
+Vous pouvez également supprimer un champ d'un document à l'aide de l'opérateur unset, ci-dessous on supprime les champs qty et status du premier document qui match avec la recherche :
 
 ```js
 db.inventory.updateOne(
@@ -288,13 +286,13 @@ db.inventory.updateMany(
 
 ## Exercice suppression d'un champ
 
-Dans la collection inventory il y a un champ level qu'il faut supprimer, aidez-vous de l'opérateur unset pour effectuer cette suppression.
+Supprimez la propriété level se trouvant dans un document.
 
-Vérifiez avec Mongo que le champ est bien supprimé.
+Vérifiez que le champ est bien supprimé.
 
 ## Opérateur switch
 
-Vous pouvez utiliser un opérateur switch afin de modifier un document :
+Vous pouvez utiliser l'opérateur switch afin de modifier un document selon une liste de cas :
 
 ```js
    $switch: {
@@ -308,17 +306,17 @@ Vous pouvez utiliser un opérateur switch afin de modifier un document :
 }
 ```
 
-Attention, dès que l'on rentre dans un cas pour modifier une propriété on sort du switch/case.
+Attention, dès que l'on rentre dans un cas on sort du switch/case.
 
 ## Exercice switch
 
-L'opérateur size permet de compter le nombre d'élément dans un array. Il faut cependant pré-fixer la propriété avec un dollar pour utiliser cet opérateur :
+L'opérateur size permet de compter le nombre d'élément dans un array. Il faut cependant pré-fixer la propriété avec un dollar :
 
 ```js
 { $size :  "$tags" }
 ```
 
-Ajoutez une propriété **grade** au document inventory pour les documents ayant la propriété tags uniquement. Cette propriété prendra les valeurs suivantes selon le nombre de tags présents :
+Ajoutez la propriété **grade** pour les documents ayant la propriété tags uniquement. Grade prendra les valeurs suivantes selon le nombre de tags :
 
 - si le nombre de tags est strictement supérieur à 2 : A
 - si le nombre de tags est strictement supérieur à 3 : AA
@@ -367,7 +365,9 @@ Cette méthode permet de supprimer plusieurs documents à l'aide d'un critère d
 
 1. Hydratation. Créez les champs **created_at** et **expired_at** pour chaque document de la collection inventory.
 
-Vous utiliserez la méthode ISODate pour créer une date aléatoire ainsi que l'objet Date de JS.
+Vous utiliserez la méthode ISODate pour créer une date aléatoire ainsi que l'objet Date de JS. Aidez-vous de l'exemple ci-dessous :
+
+- Exemple
 
 Décallage d'un jour par rapport à la date actuelle :
 
@@ -382,7 +382,7 @@ new Date( ISODate().getTime() + day )
 
 2. Ajoutez un champ qui calcule le nombre de jours qui reste avant la suppression du document.
 
-Vous utiliserez les opérateurs suivants, notez que la différence sera données en millième de secondes.
+Vous pouvez utiliser les opérateurs suivants :
 
 ```js
 // Pour faire une différence entre les dates
@@ -390,5 +390,4 @@ $subtract
 
 // Pour calculer le nombre de jour
 $divide
-
 ```

@@ -62,7 +62,7 @@ db.authors.insert(
 )
 ```
 
-Vous pouvez créer votre propre _id avec une valeur de type scalaire (non mutable). Les scalaires sont des variables qui contiennent des numériques, des chaînes de caractères ou des booléens. Les types array, object et resource ne sont pas des scalaires, ils sont mutables et ne peuvent pas être utilisés comme un identifiant pour le document.
+Vous pouvez créer votre propre _id avec une valeur de type scalaire (non mutable).
 
 - Précisions sur l'objet ObjectId
 
@@ -109,10 +109,7 @@ try {
 Méthode insertOne :
 
 ```js
-   db.authors.insertOne( { name: "Bernard", grade: "professor" } );
-} catch (e) {
-   print (e);
-};
+db.authors.insertOne( { name: "Bernard", grade: "professor" } );
 ```
 
 ## Méthode find lecture des données
@@ -154,18 +151,18 @@ Pour faire une sauvegarde d'une collection au format BJSON tapez la ligne de com
 mongodump --collection restaurants --db ny
 ```
 
-## Sélectionner des données méthode find
-
 L'instruction suivante correspond à un SELECT * FROM restaurants en SQL :
 
 ```js
 db.restaurants.find( {} )
 ```
 
-En SQL on peut faire des sélections précises à l'aide d'une restriction :
+En SQL on peut faire des sélections précises à l'aide d'une restriction partie WHERE :
 
 ```sql
-SELECT * FROM restaurants WHERE cuisine = "Delicatessen"
+SELECT * 
+FROM restaurants 
+WHERE cuisine = "Delicatessen";
 ```
 
 En MongoDB cela donnerait :
@@ -175,10 +172,16 @@ db.restaurants.find( { cuisine: "Delicatessen" } )
 
 ```
 
-Structure de la méthode find query correspond à la projection :
+Plus généralement la structure de la méthode find ressemble à :
 
 ```js
-db.collection.findOne(query, restriction).pretty()
+db.collection.findOne(query, restriction)
+```
+
+Par exemple on sélectionne les restaurants qui font de la cuisine Delicatessen en affichant que les champs : cuisine et address :
+
+```js
+db.restaurants.find({ cuisine: "Delicatessen" }, {_id : 0, cuisine : 1, address : 1}).pretty()
 ```
 
 ### Opérateur IN
@@ -194,7 +197,7 @@ Cet opérateur est similaire à l'opérateur IN de SQL.
 
 ### Opérateurs AND et OR
 
-On peut également utiliser un opérateur logique ET comme suit :
+- On peut également utiliser un opérateur logique ET comme suit :
 
 ```js
 db.restaurants.find( { "borough" : "Brooklyn", "cuisine" : "Hamburgers" } )
@@ -204,7 +207,7 @@ db.restaurants.find( { $and : [ { "borough" : "Brookyn"}, { "cuisine" : "Hamburg
 
 ```
 
-Syntaxe de l'opérateur or :
+- Syntaxe de l'opérateur or :
 
 ```js
 // { $or: [ { <expression1> }, { <expression2> }, ... , { <expressionN> } ] }
@@ -237,7 +240,13 @@ AND ( `name` LIKE '/^B/' OR `name` LIKE '/^W/')
 
 ## 1. Exercice compter le nombre de restaurants
 
-Sans utiliser la méthode count dans un premier temps comptez le nombre de restaurants dans le quartier de Brooklyn. Puis comparez le résultat avec la méthode count.
+Sans utiliser la méthode count dans un premier temps comptez le nombre de restaurants dans le quartier de Brooklyn.
+
+Puis comparez le résultat avec la méthode count :
+
+```js
+db.collection.findOne(query, restriction).count()
+```
 
 ### 2. Exercices sur la notion de filtrage
 
@@ -308,8 +317,19 @@ $regex
 Affichez également le nom, les scores et les coordonnées GPS de ces restaurants. Ordonnez les résultats
 par ordre décroissant sur les noms des restaurants.
 
-- 2. Quels sont les restaurants qui ont un grade A avec un score supérieur ou égal à 20 ? Affichez les noms et ordonnez les
-par ordre décroissant. Affichez le nombre de résultat.
+Remarque pour la dernière partie de la question utilisez la méthode sort :
+
+```js
+db.collection.findOne(query, restriction).sort({ key : 1 })
+```
+
+- 2. Quels sont les restaurants qui ont un grade A avec un score supérieur ou égal à 20 ? Affichez uniquement les noms et ordonnez les par ordre décroissant. Affichez le nombre de résultat. 
+
+Remarque pour la dernière partie de la question utilisez la méthode count :
+
+```js
+db.collection.findOne(query, restriction).count()
+```
 
 - 3. A l'aide de la méthode distinct trouvez tous les quartiers distincts de NY.
 
@@ -321,21 +341,21 @@ db.restaurants.distinct('field', {"key" : "value" })
 
 - 5. Sélectionnez les restaurants dont le grade est A ou B dans le Bronx.
 
-- 6. Même question mais, on aimerait que les restaurants qui on eu à la dernière inspection un A ou B. Vous pouvez utilisez la notion d'indice sur la clé grade :
+- 6. Même question mais, on aimerait récupérer les restaurants qui ont eu à la dernière inspection un A ou B. Vous pouvez utilisez la notion d'indice sur la clé grade :
 
 ```js
 "grades.2.grade"
 ```
 
-- 7. Sélectionnez maintenant tous les restaurants qui ont le mot "Coffee" ou "coffee" dans la propriété name du document. Puis uniquement dans le quartier du Bronx
+- 7. Sélectionnez maintenant tous les restaurants qui ont le mot "Coffee" ou "coffee" dans la propriété name du document. Puis, même question mais uniquement dans le quartier du Bronx.
 
-- 8. Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks. Puis uniquement dans le quartier du Bronx
+- 8. Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks. Puis, même question mais uniquement dans le quartier du Bronx.
 
 - 9. Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks dans le Bronx.
 
 ## Recherche par rapport à la date
 
-Qu'affiche l'exemple suivant ?
+Exécutez la requête suivante, qu'affiche-t-elle ?
 
 ```js
 db.restaurants.find({
@@ -346,7 +366,7 @@ db.restaurants.find({
 
 ## Lire un document entièrement
 
-La méthode find permet de lire les documents dans une collection, elle ne vous retournera que 20 documents au maximun par défaut :
+La méthode find permet de lire les documents dans une collection, par défaut elle ne retournera que 20 documents au maximum.
 
 ```js
 db.restaurants.find()
@@ -364,7 +384,7 @@ while (resCursor1.hasNext()) {
 }
 ```
 
-Avec la méthode foreEach :
+Avec la méthode **foreEach** :
 
 ```js
 
@@ -377,7 +397,7 @@ resCursor2.forEach(printjson);
 Vous pouvez également récupérez l'ensemble des documents dans un array :
 
 ```js
-const resCursor3 = db.restaurants.find(   );
+const resCursor3 = db.restaurants.find();
 const resArray = resCursor3.toArray();
 print( resArray[3].name );
 ```
