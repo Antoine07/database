@@ -367,7 +367,7 @@ Cette méthode permet de supprimer plusieurs documents à l'aide d'un critère d
 
 1. Hydratation. Créez les champs **created_at** et **expired_at** pour chaque document de la collection inventory.
 
-Vous utiliserez la méthode ISODate pour créer une date aléatoire.
+Vous utiliserez la méthode ISODate pour créer une date aléatoire ainsi que l'objet Date de JS.
 
 Décallage d'un jour par rapport à la date actuelle :
 

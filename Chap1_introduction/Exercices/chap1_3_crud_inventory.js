@@ -120,8 +120,11 @@ db.inventory.updateOne(
     { $unset: { level: "" } }
 )
 
-// vérification cette commande doit ne rien retourner.
+// Vérification cette requête ne retourne rien 
 db.inventory.find({ level: { $exists: true } }).pretty()
+
+
+// Exercice switch
 
 db.inventory.updateMany(
     { tags: { $exists: true } },

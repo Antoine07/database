@@ -1,4 +1,4 @@
-// Exercice correction Compter le nombre de restaurants dans le quartier de Brookling
+// ## 1. Exercice compter le nombre de restaurants
 
 const resBrookling = db.restaurants.find( {
     borough: "Brooklyn"
@@ -6,6 +6,7 @@ const resBrookling = db.restaurants.find( {
 
 let count = 0 ;
 
+// on utilise le curseur 
 resBrookling.forEach(() => {
     count++;
 });
@@ -16,10 +17,10 @@ print(count);
 print(resBrookling.count())
 
 
-// Exercices complémentaires
+// ### 2. Exercices sur la notion de filtrage
 
 /*
-Combien y a t il de restaurants qui font de la cuisine italienne et qui ont eu un score de 10 ou moins ?
+1. Combien y a t il de restaurants qui font de la cuisine italienne et qui ont eu un score de 10 ou moins ?
 Affichez également le nom, les scores et les coordonnées GPS de ces restaurents, ordonnez les résultats
 par ordre décroissant sur les noms des restaurants
 */
@@ -39,7 +40,7 @@ db.restaurants.find({
 })
 
 /*
-Quels sont les restaurants qui ont un grade A avec un score supérieur ou égal à 20 ? Affichez les noms et ordonnez les 
+2. Quels sont les restaurants qui ont un grade A avec un score supérieur ou égal à 20 ? Affichez les noms et ordonnez les 
 par ordre décroissant. Et donnez le nombre de résultat.
 */
 
@@ -54,7 +55,7 @@ db.restaurants.find({
     "name" : 1
 })
 
-// Différents quartiers de NY
+// 3. Différents quartiers de NY
 db.restaurants.distinct("borough")
 
 db.restaurants.find({
@@ -62,7 +63,7 @@ db.restaurants.find({
 }, {"name":1, _id:0, "cuisine" : 1})
 
 
-// A l'aide de la méthode distinct trouvez tous les quartiers distincts de NY.
+// 4. A l'aide de la méthode distinct trouvez tous les quartiers distincts de NY.
 db.restaurants.distinct("cuisine", {"borough" : "Bronx"})
 
 // $in
@@ -71,7 +72,7 @@ db.restaurants.find({
     { "_id" : 0, "name" : 1} 
 )
 
-// $or, $and
+// 5. Sélectionnez les restaurants dont le grade est A ou B dans le Bronx.
 db.restaurants.find({
     $and : [
         {
@@ -84,8 +85,7 @@ db.restaurants.find({
     },
     { "_id" : 0, "name" : 1} 
 )
-        
-// Indice en plus
+// 6. Même question mais, on aimerait que les restaurants qui on eu à la dernière inspection un A ou B. 
 
 db.restaurants.find({
     $and : [
@@ -101,8 +101,8 @@ db.restaurants.find({
 )
 
 /* 
-Sélectionnez maintenant tous les noms des restaurants
-qui ont dans leur nom le mot "Coffee" ou "coffee". De même on aimerait savoir si il y en a uniquement dans le Bronx.
+7. Sélectionnez maintenant tous les restaurants qui ont le mot "Coffee" ou "coffee" dans la propriété name du document. 
+Puis uniquement dans le quartier du Bronx
 */
 
 db.restaurants.find({
@@ -116,8 +116,17 @@ db.restaurants.find({
     ]
 }, { "_id" : 0, "name" : 1, "borough" : 1} )
 
-// Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contienne pas
-// le mot Starbucks
+//8. Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks.
+
+db.restaurants.find({
+    $and : [
+        {  "name" : { $in : [/Coffee/i, /Restaurant/] } },
+        {  "name" : { $nin : [/Starbucks/i] } }
+    ]
+}, { "_id" : 0, "name" : 1, "borough" : 1} )
+
+// Puis uniquement dans le quartier du Bronx
+
 db.restaurants.find({
     $and : [
         {  "name" : { $in : [/Coffee/i, /Restaurant/] } },
@@ -126,8 +135,8 @@ db.restaurants.find({
     ]
 }, { "_id" : 0, "name" : 1, "borough" : 1} )
 
-// Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contienne pas
-// le mot Starbucks dans le Bronx
+//9. Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks dans le Bronx.
+
 db.restaurants.find({
     $and : [
         {  "name" : /Coffee/i },

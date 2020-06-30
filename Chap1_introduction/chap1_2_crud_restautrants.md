@@ -204,7 +204,7 @@ db.restaurants.find( { $and : [ { "borough" : "Brookyn"}, { "cuisine" : "Hamburg
 
 ```
 
-Syntaxe or :
+Syntaxe de l'opérateur or :
 
 ```js
 // { $or: [ { <expression1> }, { <expression2> }, ... , { <expressionN> } ] }
@@ -224,7 +224,7 @@ db.restaurants.find( {
 
 ```
 
-Cela correspondrait en SQL à la requête suivante :
+Cela correspondrait (...) en SQL à la requête suivante :
 
 ```sql
 SELECT
@@ -235,13 +235,11 @@ WHERE borough = "Brooklyn"
 AND ( `name` LIKE '/^B/' OR `name` LIKE '/^W/')
 ```
 
-Mongo permet de construire facilement des requêtes pour extraire des données.
-
-## Exercice compter le nombre de restaurants
+## 1. Exercice compter le nombre de restaurants
 
 Sans utiliser la méthode count dans un premier temps comptez le nombre de restaurants dans le quartier de Brooklyn. Puis comparez le résultat avec la méthode count.
 
-### Exercices sur la notion de filtrage
+### 2. Exercices sur la notion de filtrage
 
 Exemple de filtres classiques :
 
@@ -306,34 +304,34 @@ $regex
 
 ```
 
-- Combien y a t il de restaurants qui font de la cuisine italienne et qui ont eu un score de 10 ou moins ?
+- 1. Combien y a t il de restaurants qui font de la cuisine italienne et qui ont eu un score de 10 ou moins ?
 Affichez également le nom, les scores et les coordonnées GPS de ces restaurants. Ordonnez les résultats
 par ordre décroissant sur les noms des restaurants.
 
-- Quels sont les restaurants qui ont un grade A avec un score supérieur ou égal à 20 ? Affichez les noms et ordonnez les
+- 2. Quels sont les restaurants qui ont un grade A avec un score supérieur ou égal à 20 ? Affichez les noms et ordonnez les
 par ordre décroissant. Affichez le nombre de résultat.
 
-- A l'aide de la méthode distinct trouvez tous les quartiers distincts de NY.
+- 3. A l'aide de la méthode distinct trouvez tous les quartiers distincts de NY.
 
-- Trouvez tous les types de restaurants dans le quartiers du Bronx. Vous pouvez là encore utiliser distinct et un deuxième paramètre pour préciser sur quel ensemble vous voulez appliquer cette close :
+- 4. Trouvez tous les types de restaurants dans le quartiers du Bronx. Vous pouvez là encore utiliser distinct et un deuxième paramètre pour préciser sur quel ensemble vous voulez appliquer cette close :
 
 ```js
 db.restaurants.distinct('field', {"key" : "value" })
 ```
 
-- Sélectionnez les restaurants dont le grade est A ou B dans le Bronx.
+- 5. Sélectionnez les restaurants dont le grade est A ou B dans le Bronx.
 
-- Même question mais, on aimerait que les restaurants qui on eu à la dernière inspection un A ou B. Vous pouvez utilisez la notion d'indice sur la clé grade :
+- 6. Même question mais, on aimerait que les restaurants qui on eu à la dernière inspection un A ou B. Vous pouvez utilisez la notion d'indice sur la clé grade :
 
 ```js
 "grades.2.grade"
 ```
 
-- Sélectionnez maintenant tous les restaurants qui ont le mot "Coffee" ou "coffee" dans la propriété name du document.
+- 7. Sélectionnez maintenant tous les restaurants qui ont le mot "Coffee" ou "coffee" dans la propriété name du document. Puis uniquement dans le quartier du Bronx
 
-- Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks.
+- 8. Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks. Puis uniquement dans le quartier du Bronx
 
-- Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks dans le Bronx.
+- 9. Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks dans le Bronx.
 
 ## Recherche par rapport à la date
 

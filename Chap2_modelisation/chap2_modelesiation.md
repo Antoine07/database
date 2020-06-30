@@ -1,8 +1,8 @@
 # Introduction à la Modélisation 
 
-Le modèle semi-structuré n'est pas soumis aux contraintes de normalisation.
+Le modèle semi-structuré n'est pas soumis aux contraintes de normalisation. Ce format est flexible.
 
-Par exemple un attribut peut avoir plusieurs valeurs avec un tableau :
+De plus un attribut peut avoir plusieurs valeurs, attribut genre ci-dessous :
 
 ```js
 {
@@ -11,7 +11,7 @@ Par exemple un attribut peut avoir plusieurs valeurs avec un tableau :
 }
 ```
 
-On peut également représenter des données régulières :
+On peut également représenter des données régulières dans un document :
 
 ```js
 const artists = [
@@ -21,19 +21,17 @@ const artists = [
 ]
 ```
 
-Les données semi-structurées sont appropriées pour des données complexes et qui ont besoin de souplesse.
+Les données semi-structurées sont appropriées pour des données complexes et qui ont besoin de souplesse dans leur modélisation.
 
-Avec les données semi-structurées on peut imbriquer les structures pour éviter les jointures du modèle relationel. 
-
-Lorsque vous avez à structurer vos entitées en NoSQL il faudra choisir entre les imbriquer ou utiliser une clé de référence.
+Avec les données semi-structurées on peut imbriquer les structures pour éviter les jointures du modèle relationel. Mais vous pouvez également utiliser un système de clé primaire/secondaire pour gérer les relations entre collections.
 
 ## One-to-Many Relationships
 
 Si on a des authors qui ont une ou plusieurs adresses, alors nous avons une relation entre author et address de type OneToMany. En NoSQL vous avez deux approches pour gérer ce cas :
 
-- Soit vous faites deux documents reliés avec une clé "primaire" et "secondaire". Cette approche sera nécessaire si vous avez beaucoup de documents à récupérer.
+- Soit vous faites deux documents reliés avec une clé "primaire" et "secondaire". Cette approche sera nécessaire si vous avez **beaucoup** de documents à récupérer.
 
-- Soit vous utilisez l'approche du document imbriqué. Ce cas est particulièrement intéressant si vous avez fréquemment besoin d'interroger ces deux entitées. Cette relation est appelée : Embedded Document Pattern
+- Soit vous utilisez l'approche "document imbriqué" : **Embedded Document Pattern**. Ce cas est particulièrement intéressant si vous avez fréquemment besoin d'interroger ces deux entitées.
 
 ### Exemple Embedded Document Pattern (OneToMany)
 
@@ -115,13 +113,13 @@ const books = [
 ]
 ```
 
-1. Faites un script JS afin d'associer chaque livre à sa catégorie en utilisant l'id de la catégorie, créez une propriété **categoryId** dans la collection books.
+1. Faites un script JS afin d'associer chaque livre à sa catégorie en utilisant l'id de sa catégorie. Créez une propriété **categoryId** dans la collection books.
 
 2. Puis faites une requête pour récupérer les livres dans la catégorie programmation.
 
-3. Combien de livre y a t il dans la catégorie NoSQL ? Faites une requête pour répondre à cette question.
+3. Combien de livre y a t il dans la catégorie NoSQL ? 
 
-4. Nous ajoutons maintenant des nouveaux livres dans la collection books. Ces derniers peuvent être associés à aucune ou plusieurs catégories :
+4. Associez maintenant les livres ci-desous aux catégories :
 
 ```js
 const newBooks = [
@@ -132,17 +130,13 @@ const newBooks = [
 ]
 ```
 
-Trouvez un moyen d'associer ces livres aux catégories du projet.
-
-
-En ce qui concerne la relation oneToOne elle est simple à mettre en place. Par contre la relation ManyToMany 
-
+5. Récupérez tous les livres qui n'ont pas de catégorie
 
 ## Exercice tree structure Algorithmique recherche **
 
 Dans la base de données **bookstore**.
 
-Soit la collection categoriestree suivante.
+Créez la collection categoriestree voir ci-après pour les documents.
 
 1. Ecrire un algorithme qui ajoute une propriété ancesstors à la collection afin d'énumérer les catégories parentes. Vous utiliserez l'opérateur **addToSet** pour ajouter le/les parent(s) de chaque document.
 
@@ -170,7 +164,9 @@ const categoriestree =
       books: [
             "Python apprendre",
             "Pandas & Python",
-            "async/await JS & Python"
+            "async/await JS & Python",
+            "JS paradigme objet",
+            "Anaconda"
       ]
    },
    {
