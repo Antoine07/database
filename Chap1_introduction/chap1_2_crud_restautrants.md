@@ -242,6 +242,19 @@ AND ( `name` LIKE '/^B/' OR `name` LIKE '/^W/')
 
 Sans utiliser la méthode count dans un premier temps comptez le nombre de restaurants dans le quartier de Brooklyn.
 
+Pour itérer sur une requête vous utiliserez l'une des deux syntaxes suivantes :
+
+```js
+// 1
+db.collection.find().forEach(doc => print(tojson(doc)))
+
+// 2
+const myCursor = db.users.find( restriction );
+while (myCursor.hasNext()) {
+   print(tojson(myCursor.next()));
+}
+```
+
 Puis comparez le résultat avec la méthode count :
 
 ```js
