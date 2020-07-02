@@ -175,7 +175,7 @@ db.restaurants.find( { cuisine: "Delicatessen" } )
 Plus généralement la structure de la méthode find ressemble à :
 
 ```js
-db.collection.findOne(query, restriction)
+db.collection.findOne(restriction, projection)
 ```
 
 Par exemple on sélectionne les restaurants qui font de la cuisine Delicatessen en affichant que les champs : cuisine et address :
@@ -189,7 +189,7 @@ db.restaurants.find({ cuisine: "Delicatessen" }, {_id : 0, cuisine : 1, address 
 Vous pouvez également utiliser les query operators comme dans l'exemple suivant, ici on cherche à sélectionner les types de cuisines Delicatessen ou American dans la collection restaurants
 
 ```js
-db.restaurants.find( { cuisine: { $in [ "Delicatessen", "American" ] } } )
+db.restaurants.find( { cuisine: { $in : [ "Delicatessen", "American" ] } } )
 
 ```
 
@@ -272,6 +272,9 @@ $gt, $gte
 // Plus petit que
 $lt, $lte
 
+// collection inventory  quantité < 10 
+db.inventory.find( { quantity : { $lt: 20 } } )
+
 ```
 
 D'autres filtres :
@@ -300,7 +303,13 @@ $not
 
 // existe
 $exists
-"notes" : {"$exists" : 1}
+"notes" : {"$exists" : true}
+
+// tous les documents qui possède(nt) la propriété level
+db.inventory.find( { level : { $exists: true } } )
+
+// tous les documents qui ne possède(nt) pas la propriété level
+db.inventory.find( { level : { $exists: false } } )
 
 // test sur la taille d'une liste
 $size
@@ -326,14 +335,14 @@ $regex
 
 ```
 
-- 1. Combien y a t il de restaurants qui font de la cuisine italienne et qui ont eu un score de 10 ou moins ?
+- 1. Combien y a t il de restaurants qui font de la cuisine italienne et qui ont eu un score de 10 au moins ?
 Affichez également le nom, les scores et les coordonnées GPS de ces restaurants. Ordonnez les résultats
 par ordre décroissant sur les noms des restaurants.
 
 Remarque pour la dernière partie de la question utilisez la méthode sort :
 
 ```js
-db.collection.findOne(query, restriction).sort({ key : 1 })
+db.collection.findOne(query, restriction).sort({ key : 1 }) // 1 pour ordre croissant et -1 pour décroissant
 ```
 
 - 2. Quels sont les restaurants qui ont un grade A avec un score supérieur ou égal à 20 ? Affichez uniquement les noms et ordonnez les par ordre décroissant. Affichez le nombre de résultat. 
@@ -364,7 +373,35 @@ db.restaurants.distinct('field', {"key" : "value" })
 
 - 8. Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks. Puis, même question mais uniquement dans le quartier du Bronx.
 
-- 9. Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks dans le Bronx.
+- 9. Nouvelle question : Trouvez tous les restaurants qui ont dans leur nom le mot clé coffee, qui sont dans le bronx ou dans Brooklyn, qui ont eu exactement 4 appréciations (grades), qui ont eu au moins un A en dernière notation et qui ont été évalués à une date supérieur ou égale à 2012-10-24 mais pas avant. 
+
+- Affichez tous les noms de ces restaurants en majuscule avec leur dernière date et permière date d'évaluation.
+- Précisez également le quartier dans lequel ce restaurent se trouve.
+
+## Recherche de restaurents à proximité d'un lieu
+
+MongoDB permet de gérér des points GPS. Dans la collection restaurants nous avons un champ grades.coord qui correspond à des coordonnées GPS (longitude & latitude).
+
+Nous allons utiliser les coordonnées sphériques de MongoDB. Pour l'implémenter dans la collection vous devez créer un index particulier sur le champ coord :
+
+```js
+db.restaurants.createIndex({ "address.coord" : "2dsphere" })
+```
+
+Trouvez tous les restaurants qui sont à 5 miles autour du point GPS suivant, donnez leurs noms, leur quartier ainsi que les coordonnées GPS :
+
+```js
+const coordinate = [
+  -73.961704,
+  40.662942
+];
+```
+
+Vous utiliserez la syntaxe suivante avec les opérateurs MongoDB :
+
+```js
+{ $nearSphere: { $geometry: { type: "Point", coordinates: coordinate }, $maxDistance: VOTRE_DISTANCE} }
+```
 
 ## Recherche par rapport à la date
 
