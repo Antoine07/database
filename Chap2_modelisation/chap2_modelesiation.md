@@ -54,6 +54,8 @@ Si on a des authors qui ont une ou plusieurs adresses, alors nous avons une rela
         }
     ]
  }
+
+ db.authors.findOne({_id : "joe"}).addresses
 ```
 
 Mais vous pouvez également avoir une approche clé primaire/clé secondaire :
@@ -67,6 +69,7 @@ Mais vous pouvez également avoir une approche clé primaire/clé secondaire :
 
 // addresses
 {
+   _id : 1,
    author_id: ObjectId("5ef74d993d4deb402daff427"), 
    street: "123 Fake Street",
    city: "Faketon",
@@ -75,12 +78,16 @@ Mais vous pouvez également avoir une approche clé primaire/clé secondaire :
 }
 
 {
+   _id : 2,
    author_id: ObjectId("5ef74d993d4deb402daff427"),
    street: "1 Some Other Street",
    city: "Boston",
    state: "MA",
    zip: "12345"
 }
+
+const _id = db.authors.findOne({_id : "joe"})._id
+db.adresses.find( { author_id : _id })
 
 ```
 
@@ -143,7 +150,9 @@ Créez la collection categoriestree voir ci-après pour les documents.
 Par exemple la catégorie MongoDB aurait la propriété ancesstors suivante :
 
 ```js
+
 db.categoriestree.find({ _id : "MongoDB"}, {ancesstors : 1} )
+
 { "_id" : "MongoDB", "ancesstors" : [ { "_id" : "Database" }, { "_id" : "Programming" }, { "_id" : "Books" } ] }
 ```
 

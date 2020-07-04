@@ -238,6 +238,24 @@ WHERE borough = "Brooklyn"
 AND ( `name` LIKE '/^B/' OR `name` LIKE '/^W/')
 ```
 
+## XOR
+
+Pour le ou exclusif il n'y a pas à ce jour un opérateur de ce type dans MongoDB, par contre vous pouvez parfaitement l'implémenter de manière équivalent avec les opérateurs or et and. Rappelons que P XOR Q : est vrai si et seulement (si P est vrai et Q est faux) ou (P est faux et Q est vrai). Dans les autres cas XOR sera évalué comme faux.
+
+Considérez l'exemple suivant pour des propriétés a et b on chercher ici à sélectionner les documents dont a = 1 XOR b = 1 :
+
+```js
+// créez la collection foo dans une base de données de votre choix
+db.foo.insertMany( [ { a : 1, b : 2 }, { a : 2 , b : 1  }, {a : 1, b : 1 } , { a: 3 , b : 1 }])
+
+db.foo.find({ $or: [ { 'a': 1 , 'b' : {$ne : 1} }, { 'b': 1, 'a' : {$ne : 1} } ] }, {_id : 0})
+/*
+{ "a" : 1, "b" : 2 }
+{ "a" : 2, "b" : 1 }
+{ "a" : 3, "b" : 1 }
+*/
+```
+
 ## 1. Exercice compter le nombre de restaurants
 
 Sans utiliser la méthode count dans un premier temps comptez le nombre de restaurants dans le quartier de Brooklyn.
@@ -372,15 +390,25 @@ db.restaurants.distinct('field', {"key" : "value" })
 - 7. Sélectionnez maintenant tous les restaurants qui ont le mot "Coffee" ou "coffee" dans la propriété name du document. Puis, même question mais uniquement dans le quartier du Bronx.
 
 - 8. Trouvez tous les restaurants avec les mots Coffee ou Restaurant et qui ne contiennent pas le mot Starbucks. Puis, même question mais uniquement dans le quartier du Bronx.
+Enfin, trouvez tous les restaurants avec les mots Coffee ou Restaurant ne se trouvant pas dans le Bronx et ne contenant pas le mot Starbucks.
 
-- 9. Nouvelle question : Trouvez tous les restaurants qui ont dans leur nom le mot clé coffee, qui sont dans le bronx ou dans Brooklyn, qui ont eu exactement 4 appréciations (grades), qui ont eu au moins un A en dernière notation et qui ont été évalués à une date supérieur ou égale à 2012-10-24 mais pas avant. 
+- 9. Nouvelle question : Trouvez tous les restaurants qui ont dans leur nom le mot clé coffee, qui sont dans le bronx ou dans Brooklyn, qui ont eu exactement 4 appréciations (grades), qui ont eu au moins un A en dernière notation et qui ont été évalués à une date supérieur ou égale à 2012-10-24 mais pas avant.
 
 - Affichez tous les noms de ces restaurants en majuscule avec leur dernière date et permière date d'évaluation.
 - Précisez également le quartier dans lequel ce restaurent se trouve.
 
+
+Indications : utilisez les opérateurs suivants :
+
+```js
+{ $size : 4 }
+ISODate('2012-10-24T00:00:00Z') // UTC -2h par rapport à l'heure française
+"bonjour".toUpperCase()  
+```
+
 ## Recherche de restaurents à proximité d'un lieu
 
-MongoDB permet de gérér des points GPS. Dans la collection restaurants nous avons un champ grades.coord qui correspond à des coordonnées GPS (longitude & latitude).
+MongoDB permet de gérér des points GPS. Dans la collection restaurants nous avons un champ address.coord qui correspond à des coordonnées GPS (longitude & latitude).
 
 Nous allons utiliser les coordonnées sphériques de MongoDB. Pour l'implémenter dans la collection vous devez créer un index particulier sur le champ coord :
 

@@ -133,7 +133,9 @@ db.categoriestree.createIndex({ parent: 1 });
 // 1.
 
 const pushAncesstors = (_id, doc) => {
+    print("_id", _id)
     if (doc.parent) {
+        print("parent", doc.parent)
         db.categoriestree.update({ _id: _id }, { $addToSet: { "ancesstors": { _id: doc.parent } } });
         pushAncesstors(_id, db.categoriestree.findOne({ _id: doc.parent }));
     }

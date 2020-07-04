@@ -28,9 +28,9 @@ cursorInventor({ society: /^A/ },).forEach( invent => {
 
 cursorInventor({ qty : {$gte : 45 } }).sort({qty:1}).forEach( invent => { print(invent.society, invent.qty) });
 
-//5. Affichez le nom des sociétés dont la quantité d'article est strictement supérieur à 45 et inférieur à 90.
+//5. Affichez le nom des sociétés dont la quantité d'article est strictement supérieur à 45 et inférieur supérieur à 90.
 
-cursorInventor({ qty : {$gt : 45 } }, { qty : {$lte : 100 } } ).sort({qty:1}).forEach( invent => { print(invent.society, invent.qty) });
+cursorInventor({ qty : { $gt : 45 } }, { qty : { $lt : 90 } } ).sort({qty:1}).forEach( invent => { print(invent.society, invent.qty) });
 
 //6. Affichez le nom des sociétés dont le statut est A ou le type est journal.
 
@@ -129,23 +129,26 @@ db.inventory.find({ level: { $exists: true } }).pretty()
 db.inventory.updateMany(
     { tags: { $exists: true } },
     [
+
         {
             $set: {
-                grade: {
+                label: {
                     $switch: {
                         branches: [
                             { case: { $gt: [{ $size: "$tags" }, 3] }, then: "AA" },
-                            { case: { $gt: [{ $size: "$tags" }, 2] }, then: "A" }
+                            { case: { $gt: [{ $size: "$tags" }, 1] }, then: "A" },
                         ],
                         default: "B"
                     }
                 }
             }
-        }
+        },
+
+        { $set : { totalTags : { $size : "$tags"} } }
     ]
 )
 
-db.inventory.find({ grade: { $exists: true } }, { tags: 1, grade: 1 })
+db.inventory.find({ label: { $exists: true } }, { tags: 1, label: 1, totalTags : 1, _id : 0 })
 
 
 /*
@@ -195,3 +198,40 @@ db.inventory.updateMany(
         { $set: { life: { $divide : [  { $subtract: [ "$expired_at", "$created_at",  ] } , 1000 * 60 * 60 * 24 ] }  } },
     ]
 );
+
+// 1.
+const cursorInventor = (rest, proj = null) => { 
+    if(proj === null) 
+        return db.inventory.find(rest);
+    else
+        return db.inventory.find(rest, proj);
+};
+
+let total = 0;
+
+cursorInventor({ type: "journal" }).forEach(doc => {
+    const { qty } = doc;
+
+    total += qty;
+});
+
+print(`Total des produits : ${total}`);
+
+print(cursorInventor) // vide
+
+// 1. Deuxième solution
+
+total = 0;
+db.inventory.find({ type: "journal" }).forEach(doc => {
+    const { qty } = doc; // destructuration
+
+    total += qty;
+
+});
+
+// 2.
+cursorInventor({ year: { $gte: 2018 } }, {society : 1, qty : 1 , _id : 0 }).forEach(doc => {
+    const { society, qty } = doc;
+
+    print(society, qty);
+});

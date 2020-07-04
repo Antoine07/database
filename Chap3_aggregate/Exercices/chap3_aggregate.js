@@ -1,3 +1,20 @@
+let count = 0 ;
+db.restaurants.aggregate([
+    // { $match : { cuisine : "Italian"}},
+    { $group : {"_id" : "$cuisine", "total" : {$sum : 1}}},
+]).forEach(
+    doc => {
+        const { total } = doc;
+        count += total;
+    }
+)
+
+print(  db.restaurants.find( { cuisine : "Italian"} ).count() )
+
+// cuisine différentes retourne un array
+db.restaurants.distinct(  "cuisine" )
+
+print( db.restaurants.distinct(  "cuisine" ).length )
 
 // aggrégation
 const unwindCuisine = { $unwind: "$grades" }
@@ -25,8 +42,7 @@ db.sales.aggregate(
         }
     ]
 )
-
-// - 2. Quelles sont les totaux dans ce regroupement qui sont supérieurs à 950000 ?
+// - 2. Quelles sont les totaux dans ce regroupement qui sont supérieurs ou égaux à 950000 ?
 db.sales.aggregate(
     [
         {

@@ -24,7 +24,7 @@ db.orders.insertMany( [
 
 ```
 
-Map reduce en action, une fois que vous avez exécuté cette commande la collection total sera créé il suffira de l'interroger comme une collection classique pour récupérer son contenu.
+Une fois que vous avez exécuté cette commande la collection **map_reduce_total** sera créée.
 
 ```js
 
@@ -33,10 +33,16 @@ db.orders.mapReduce(
     function(k, v) { return Array.sum(v)}, // reduce
     { 
         query : { status : "A" },
-        out : "total"
+        out : "map_reduce_total"
     }
 )
 
+db.map_reduce_total.find()
+/*
+{ "_id" : "A123", "value" : 950 }
+{ "_id" : "B123", "value" : 750 }
+{ "_id" : "B125", "value" : 200 }
+*/
 ```
 
 ## Récupération des données
@@ -79,8 +85,15 @@ Trouvez tous les noms des sportifs qui ne pratiquent pas de sport ... Vous pouve
 
 Calculez le nombre de sportifs jouant pour chaque sport. Explorez la collection pour voir comment elle est structurée avant d'écrire un script avec le Pattern MapReduce pour répondre à cette question.
 
-## Exercices
+## Exercices 3 
 
 - Calculez le nombre de gymnases pour chaque ville.
 
 - Calculez le nombre de séances pour chaque jour de la semaine. De même pour chaque sport.
+
+
+Nous allons maintenant reprendre le dataset restaurants
+
+## Exercices nombre de grade A
+
+Comptez le nombre de A par type de cuisine
